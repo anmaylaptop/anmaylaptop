@@ -18,7 +18,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Search, Filter, MoreHorizontal, Eye, Check, X, Plus } from "lucide-react";
+import { DonorRegistrationForm } from "@/components/forms/DonorRegistrationForm";
+import { StudentRegistrationForm } from "@/components/forms/StudentRegistrationForm";
 
 interface Application {
   id: string;
@@ -108,10 +116,27 @@ function ApplicationTable({ applications, type }: { applications: Application[];
 
 export default function Applications() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<"donors" | "students">("donors");
+  const [isDonorDialogOpen, setIsDonorDialogOpen] = useState(false);
+  const [isStudentDialogOpen, setIsStudentDialogOpen] = useState(false);
+
+  const handleAddNew = () => {
+    if (activeTab === "donors") {
+      setIsDonorDialogOpen(true);
+    } else {
+      setIsStudentDialogOpen(true);
+    }
+  };
+
+  const handleFormSuccess = () => {
+    setIsDonorDialogOpen(false);
+    setIsStudentDialogOpen(false);
+    // TODO: Refresh the applications list
+  };
 
   return (
     <MainLayout title="Đơn đăng ký" description="Quản lý đơn đăng ký từ nhà hảo tâm và sinh viên">
-      <Tabs defaultValue="donors" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "donors" | "students")} className="space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <TabsList>
             <TabsTrigger value="donors">Nhà hảo tâm</TabsTrigger>
@@ -131,7 +156,7 @@ export default function Applications() {
             <Button variant="outline" size="icon">
               <Filter className="h-4 w-4" />
             </Button>
-            <Button>
+            <Button onClick={handleAddNew}>
               <Plus className="mr-2 h-4 w-4" /> Thêm mới
             </Button>
           </div>
@@ -145,6 +170,32 @@ export default function Applications() {
           <ApplicationTable applications={mockStudentApplications} type="student" />
         </TabsContent>
       </Tabs>
+
+      {/* Donor Registration Dialog */}
+      <Dialog open={isDonorDialogOpen} onOpenChange={setIsDonorDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Đăng ký nhà hảo tâm</DialogTitle>
+          </DialogHeader>
+          <DonorRegistrationForm
+            onSuccess={handleFormSuccess}
+            onCancel={() => setIsDonorDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Student Registration Dialog */}
+      <Dialog open={isStudentDialogOpen} onOpenChange={setIsStudentDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Đăng ký sinh viên cần hỗ trợ</DialogTitle>
+          </DialogHeader>
+          <StudentRegistrationForm
+            onSuccess={handleFormSuccess}
+            onCancel={() => setIsStudentDialogOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }
