@@ -174,17 +174,16 @@ export function useUpdateApplicationStatus() {
 
       // If approved, create corresponding donor/student record
       if (status === "approved") {
-        // Check if record already exists to prevent duplicates
         const targetTable = type === "donor" ? "donors" : "students";
-        const { data: existingRecord } = await supabase
-          .from(targetTable)
-          .select("id")
-          .eq("application_id", id)
-          .single();
+        
+        if (type === "donor") {
+          // Check if donor already exists by phone number
+          const { data: existingDonor } = await supabase
+            .from("donors")
+            .select("id, support_types, support_frequency, laptop_quantity, motorbike_quantity, components_quantity, tuition_amount, tuition_frequency")
+            .eq("phone", applicationData.phone)
+            .single();
 
-        if (!existingRecord) {
-          if (type === "donor") {
-            // Create donor record from application
           const donorData = {
             application_id: applicationData.id,
             full_name: applicationData.full_name,
@@ -193,7 +192,6 @@ export function useUpdateApplicationStatus() {
             address: applicationData.address,
             facebook_link: applicationData.facebook_link,
             support_types: applicationData.support_types,
-            support_frequency: applicationData.support_frequency,
             support_details: applicationData.support_details,
             laptop_quantity: applicationData.laptop_quantity,
             motorbike_quantity: applicationData.motorbike_quantity,
@@ -205,11 +203,53 @@ export function useUpdateApplicationStatus() {
             notes: applicationData.notes,
           };
 
-          const { data: donorRecord, error: donorError } = await supabase
-            .from("donors")
-            .insert(donorData)
-            .select()
-            .single();
+          let donorRecord;
+
+          if (existingDonor) {
+            // Merge support types (combine unique types)
+            const mergedSupportTypes = [...new Set([...existingDonor.support_types, ...applicationData.support_types])];
+            
+            // Merge quantities (sum them up)
+            const mergedData = {
+              ...donorData,
+              support_types: mergedSupportTypes,
+              laptop_quantity: (existingDonor.laptop_quantity || 0) + (applicationData.laptop_quantity || 0) || null,
+              motorbike_quantity: (existingDonor.motorbike_quantity || 0) + (applicationData.motorbike_quantity || 0) || null,
+              components_quantity: (existingDonor.components_quantity || 0) + (applicationData.components_quantity || 0) || null,
+              tuition_amount: applicationData.tuition_amount || existingDonor.tuition_amount,
+              tuition_frequency: applicationData.tuition_frequency || existingDonor.tuition_frequency,
+              updated_at: new Date().toISOString(),
+            };
+
+            // Update existing donor record
+            const { data: updatedDonor, error: updateError } = await supabase
+              .from("donors")
+              .update(mergedData)
+              .eq("id", existingDonor.id)
+              .select()
+              .single();
+
+            if (updateError) {
+              console.error("Error updating existing donor record:", updateError);
+              throw updateError;
+            }
+
+            donorRecord = updatedDonor;
+          } else {
+            // Create new donor record
+            const { data: newDonor, error: donorError } = await supabase
+              .from("donors")
+              .insert(donorData)
+              .select()
+              .single();
+
+            if (donorError) {
+              console.error("Error creating donor record:", donorError);
+              throw donorError;
+            }
+
+            donorRecord = newDonor;
+          }
 
           if (donorError) {
             console.error("Error creating donor record:", donorError);
@@ -264,7 +304,13 @@ export function useUpdateApplicationStatus() {
             });
           }
         } else {
-          // Create student record from application
+          // Check if student already exists by phone number
+          const { data: existingStudent } = await supabase
+            .from("students")
+            .select("id, need_laptop, need_motorbike, need_tuition, need_components, laptop_received, motorbike_received, tuition_supported, components_received")
+            .eq("phone", applicationData.phone)
+            .single();
+
           const studentData = {
             application_id: applicationData.id,
             full_name: applicationData.full_name,
@@ -289,15 +335,43 @@ export function useUpdateApplicationStatus() {
             notes: applicationData.notes,
           };
 
-          const { error: studentError } = await supabase
-            .from("students")
-            .insert(studentData);
+          if (existingStudent) {
+            // Merge needs (OR operation - if they need it in any application, they need it)
+            const mergedData = {
+              ...studentData,
+              need_laptop: existingStudent.need_laptop || applicationData.need_laptop,
+              need_motorbike: existingStudent.need_motorbike || applicationData.need_motorbike,
+              need_tuition: existingStudent.need_tuition || applicationData.need_tuition,
+              need_components: existingStudent.need_components || applicationData.need_components,
+              // Keep existing received status
+              laptop_received: existingStudent.laptop_received,
+              motorbike_received: existingStudent.motorbike_received,
+              tuition_supported: existingStudent.tuition_supported,
+              components_received: existingStudent.components_received,
+              updated_at: new Date().toISOString(),
+            };
 
-          if (studentError) {
-            console.error("Error creating student record:", studentError);
-            throw studentError;
+            // Update existing student record
+            const { error: updateError } = await supabase
+              .from("students")
+              .update(mergedData)
+              .eq("id", existingStudent.id);
+
+            if (updateError) {
+              console.error("Error updating existing student record:", updateError);
+              throw updateError;
+            }
+          } else {
+            // Create new student record
+            const { error: studentError } = await supabase
+              .from("students")
+              .insert(studentData);
+
+            if (studentError) {
+              console.error("Error creating student record:", studentError);
+              throw studentError;
+            }
           }
-        }
         }
       }
 
