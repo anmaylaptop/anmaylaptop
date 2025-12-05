@@ -199,3 +199,40 @@ export function useDeleteDonor() {
     },
   });
 }
+
+interface CreateDonorParams {
+  donor: Omit<DonorData, "id" | "created_at" | "updated_at">;
+}
+
+export function useCreateDonor() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ donor }: CreateDonorParams) => {
+      const { data, error } = await supabase
+        .from("donors")
+        .insert({
+          ...donor,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating donor:", error);
+        throw error;
+      }
+
+      return data as DonorData;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["donors"] });
+      toast.success("Thêm nhà hảo tâm thành công");
+    },
+    onError: (error) => {
+      console.error("Error creating donor:", error);
+      toast.error("Có lỗi xảy ra khi thêm nhà hảo tâm");
+    },
+  });
+}

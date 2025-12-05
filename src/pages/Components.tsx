@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CreateComponentForm } from "@/components/forms/CreateComponentForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ const statusColors: Record<string, "approved" | "pending" | "rejected"> = {
 export default function Components() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const {
     data: components = [],
@@ -109,7 +111,7 @@ export default function Components() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Thêm linh kiện
         </Button>
       </div>
@@ -197,6 +199,11 @@ export default function Components() {
           </Table>
         </div>
       )}
+
+      <CreateComponentForm
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </MainLayout>
   );
 }

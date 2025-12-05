@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CreateMotorbikeForm } from "@/components/forms/CreateMotorbikeForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ const statusColors: Record<string, "approved" | "pending" | "rejected"> = {
 export default function Motorbikes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const {
     data: motorbikes = [],
@@ -110,7 +112,7 @@ export default function Motorbikes() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Thêm xe máy
         </Button>
       </div>
@@ -196,6 +198,11 @@ export default function Motorbikes() {
           </Table>
         </div>
       )}
+
+      <CreateMotorbikeForm
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </MainLayout>
   );
 }

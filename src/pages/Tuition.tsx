@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CreateTuitionForm } from "@/components/forms/CreateTuitionForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,7 @@ const statusIcons: Record<string, React.ComponentType<{ className?: string }>> =
 export default function Tuition() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const {
     data: tuitionSupports = [],
@@ -161,7 +163,7 @@ export default function Tuition() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Thêm hỗ trợ học phí
         </Button>
       </div>
@@ -268,6 +270,11 @@ export default function Tuition() {
           </Table>
         </div>
       )}
+
+      <CreateTuitionForm
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </MainLayout>
   );
 }

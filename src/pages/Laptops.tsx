@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CreateLaptopForm } from "@/components/forms/CreateLaptopForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,6 +50,7 @@ const statusColors: Record<string, "approved" | "pending" | "rejected"> = {
 export default function Laptops() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const {
     data: laptops = [],
@@ -110,7 +112,7 @@ export default function Laptops() {
             </SelectContent>
           </Select>
         </div>
-        <Button>
+        <Button onClick={() => setCreateDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Thêm laptop
         </Button>
       </div>
@@ -196,6 +198,11 @@ export default function Laptops() {
           </Table>
         </div>
       )}
+
+      <CreateLaptopForm
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </MainLayout>
   );
 }

@@ -151,6 +151,39 @@ export function useUpdateLaptop() {
   });
 }
 
+export function useCreateLaptop() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newLaptop: Omit<LaptopData, "id" | "created_at" | "updated_at" | "donor_name" | "student_name">) => {
+      const { data, error } = await supabase
+        .from("laptops")
+        .insert({
+          ...newLaptop,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating laptop:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["laptops"] });
+      toast.success("Thêm laptop thành công");
+    },
+    onError: (error) => {
+      console.error("Error creating laptop:", error);
+      toast.error("Có lỗi xảy ra khi thêm laptop");
+    },
+  });
+}
+
 // ============================================
 // MOTORBIKE INVENTORY
 // ============================================
@@ -255,6 +288,39 @@ export function useUpdateMotorbike() {
     onError: (error) => {
       console.error("Error updating motorbike:", error);
       toast.error("Có lỗi xảy ra khi cập nhật xe máy");
+    },
+  });
+}
+
+export function useCreateMotorbike() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newMotorbike: Omit<MotorbikeData, "id" | "created_at" | "updated_at" | "donor_name" | "student_name">) => {
+      const { data, error } = await supabase
+        .from("motorbikes")
+        .insert({
+          ...newMotorbike,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating motorbike:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["motorbikes"] });
+      toast.success("Thêm xe máy thành công");
+    },
+    onError: (error) => {
+      console.error("Error creating motorbike:", error);
+      toast.error("Có lỗi xảy ra khi thêm xe máy");
     },
   });
 }
@@ -367,6 +433,39 @@ export function useUpdateComponent() {
   });
 }
 
+export function useCreateComponent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newComponent: Omit<ComponentData, "id" | "created_at" | "updated_at" | "donor_name" | "student_name">) => {
+      const { data, error } = await supabase
+        .from("components")
+        .insert({
+          ...newComponent,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating component:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["components"] });
+      toast.success("Thêm linh kiện thành công");
+    },
+    onError: (error) => {
+      console.error("Error creating component:", error);
+      toast.error("Có lỗi xảy ra khi thêm linh kiện");
+    },
+  });
+}
+
 // ============================================
 // TUITION SUPPORT
 // ============================================
@@ -471,6 +570,39 @@ export function useUpdateTuitionSupport() {
     onError: (error) => {
       console.error("Error updating tuition support:", error);
       toast.error("Có lỗi xảy ra khi cập nhật hỗ trợ học phí");
+    },
+  });
+}
+
+export function useCreateTuitionSupport() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newTuition: Omit<TuitionSupportData, "id" | "created_at" | "updated_at" | "donor_name" | "student_name">) => {
+      const { data, error } = await supabase
+        .from("tuition_support")
+        .insert({
+          ...newTuition,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating tuition support:", error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tuition-support"] });
+      toast.success("Thêm hỗ trợ học phí thành công");
+    },
+    onError: (error) => {
+      console.error("Error creating tuition support:", error);
+      toast.error("Có lỗi xảy ra khi thêm hỗ trợ học phí");
     },
   });
 }
