@@ -153,6 +153,48 @@ export function DonorDetailDialog({
                   </div>
                 )}
               </div>
+              
+              {/* Support-specific quantities */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {donor.support_types.includes('laptop') && donor.laptop_quantity && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Số lượng laptop</p>
+                    <p className="font-medium">{donor.laptop_quantity}</p>
+                  </div>
+                )}
+                
+                {donor.support_types.includes('motorbike') && donor.motorbike_quantity && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Số lượng xe máy</p>
+                    <p className="font-medium">{donor.motorbike_quantity}</p>
+                  </div>
+                )}
+                
+                {donor.support_types.includes('components') && donor.components_quantity && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Số lượng linh kiện</p>
+                    <p className="font-medium">{donor.components_quantity}</p>
+                  </div>
+                )}
+                
+                {donor.support_types.includes('tuition') && donor.tuition_amount && (
+                  <div className="md:col-span-2">
+                    <p className="text-sm text-muted-foreground">Hỗ trợ học phí</p>
+                    <p className="font-medium">
+                      {new Intl.NumberFormat('vi-VN', { 
+                        style: 'currency', 
+                        currency: 'VND' 
+                      }).format(donor.tuition_amount)}
+                      {donor.tuition_frequency && (
+                        <span className="text-sm text-muted-foreground ml-2">
+                          ({supportFrequencyLabels[donor.tuition_frequency as SupportFrequency] || donor.tuition_frequency})
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
+              
               {donor.support_details && (
                 <div>
                   <p className="text-sm text-muted-foreground">Chi tiết hỗ trợ</p>

@@ -13,6 +13,11 @@ export interface DonorApplicationData {
   support_types: string[];
   support_frequency: string;
   support_details: string | null;
+  laptop_quantity: number | null;
+  motorbike_quantity: number | null;
+  components_quantity: number | null;
+  tuition_amount: number | null;
+  tuition_frequency: string | null;
   status: ApplicationStatus;
   rejection_reason: string | null;
   notes: string | null;
@@ -190,18 +195,73 @@ export function useUpdateApplicationStatus() {
             support_types: applicationData.support_types,
             support_frequency: applicationData.support_frequency,
             support_details: applicationData.support_details,
+            laptop_quantity: applicationData.laptop_quantity,
+            motorbike_quantity: applicationData.motorbike_quantity,
+            components_quantity: applicationData.components_quantity,
+            tuition_amount: applicationData.tuition_amount,
+            tuition_frequency: applicationData.tuition_frequency,
             support_end_date: null,
             is_active: true,
             notes: applicationData.notes,
           };
 
-          const { error: donorError } = await supabase
+          const { data: donorRecord, error: donorError } = await supabase
             .from("donors")
-            .insert(donorData);
+            .insert(donorData)
+            .select()
+            .single();
 
           if (donorError) {
             console.error("Error creating donor record:", donorError);
             throw donorError;
+          }
+
+          // Create inventory records based on support types and quantities
+          const donorId = donorRecord.id;
+
+          // Create laptop records
+          if (applicationData.support_types.includes('laptop') && applicationData.laptop_quantity) {
+            for (let i = 0; i < applicationData.laptop_quantity; i++) {
+              await supabase.from("laptops").insert({
+                donor_id: donorId,
+                status: 'available',
+                notes: `Từ nhà hảo tâm: ${applicationData.full_name}`,
+              });
+            }
+          }
+
+          // Create motorbike records
+          if (applicationData.support_types.includes('motorbike') && applicationData.motorbike_quantity) {
+            for (let i = 0; i < applicationData.motorbike_quantity; i++) {
+              await supabase.from("motorbikes").insert({
+                donor_id: donorId,
+                status: 'available', 
+                notes: `Từ nhà hảo tâm: ${applicationData.full_name}`,
+              });
+            }
+          }
+
+          // Create component records
+          if (applicationData.support_types.includes('components') && applicationData.components_quantity) {
+            for (let i = 0; i < applicationData.components_quantity; i++) {
+              await supabase.from("components").insert({
+                donor_id: donorId,
+                component_type: 'General', // Will be updated when received
+                status: 'available',
+                notes: `Từ nhà hảo tâm: ${applicationData.full_name}`,
+              });
+            }
+          }
+
+          // Create tuition support record
+          if (applicationData.support_types.includes('tuition') && applicationData.tuition_amount) {
+            await supabase.from("tuition_support").insert({
+              donor_id: donorId,
+              amount: applicationData.tuition_amount,
+              frequency: applicationData.tuition_frequency || 'one_time',
+              status: 'pledged',
+              notes: `Từ nhà hảo tâm: ${applicationData.full_name}`,
+            });
           }
         } else {
           // Create student record from application

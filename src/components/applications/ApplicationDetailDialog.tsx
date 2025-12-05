@@ -141,6 +141,48 @@ export function ApplicationDetailDialog({
                     {supportFrequencyMap[application.support_frequency] || application.support_frequency}
                   </p>
                 </div>
+                
+                {/* Support-specific details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {application.support_types.includes('laptop') && application.laptop_quantity && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Số lượng laptop</p>
+                      <p className="font-medium">{application.laptop_quantity}</p>
+                    </div>
+                  )}
+                  
+                  {application.support_types.includes('motorbike') && application.motorbike_quantity && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Số lượng xe máy</p>
+                      <p className="font-medium">{application.motorbike_quantity}</p>
+                    </div>
+                  )}
+                  
+                  {application.support_types.includes('components') && application.components_quantity && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Số lượng linh kiện</p>
+                      <p className="font-medium">{application.components_quantity}</p>
+                    </div>
+                  )}
+                  
+                  {application.support_types.includes('tuition') && application.tuition_amount && (
+                    <div className="md:col-span-2">
+                      <p className="text-sm text-muted-foreground">Hỗ trợ học phí</p>
+                      <p className="font-medium">
+                        {new Intl.NumberFormat('vi-VN', { 
+                          style: 'currency', 
+                          currency: 'VND' 
+                        }).format(application.tuition_amount)}
+                        {application.tuition_frequency && (
+                          <span className="text-sm text-muted-foreground ml-2">
+                            ({supportFrequencyMap[application.tuition_frequency] || application.tuition_frequency})
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
                 {application.support_details && (
                   <div>
                     <p className="text-sm text-muted-foreground">Chi tiết hỗ trợ</p>

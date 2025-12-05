@@ -44,6 +44,55 @@ const formSchema = z.object({
     required_error: "Vui lòng chọn mức độ hỗ trợ",
   }),
   support_details: z.string().optional(),
+  
+  // Support-specific fields
+  laptop_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
+  motorbike_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
+  components_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
+  tuition_amount: z.coerce.number().min(100000, "Số tiền phải ít nhất 100,000 VNĐ").optional(),
+  tuition_frequency: z.nativeEnum(SupportFrequency).optional(),
+}).superRefine((data, ctx) => {
+  // Validate required fields based on support types
+  if (data.support_types.includes(SupportType.LAPTOP) && !data.laptop_quantity) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Vui lòng nhập số lượng laptop",
+      path: ["laptop_quantity"],
+    });
+  }
+  
+  if (data.support_types.includes(SupportType.MOTORBIKE) && !data.motorbike_quantity) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Vui lòng nhập số lượng xe máy",
+      path: ["motorbike_quantity"],
+    });
+  }
+  
+  if (data.support_types.includes(SupportType.COMPONENTS) && !data.components_quantity) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Vui lòng nhập số lượng linh kiện",
+      path: ["components_quantity"],
+    });
+  }
+  
+  if (data.support_types.includes(SupportType.TUITION)) {
+    if (!data.tuition_amount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Vui lòng nhập số tiền hỗ trợ học phí",
+        path: ["tuition_amount"],
+      });
+    }
+    if (!data.tuition_frequency) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Vui lòng chọn tần suất hỗ trợ học phí",
+        path: ["tuition_frequency"],
+      });
+    }
+  }
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -78,8 +127,16 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
       support_types: [],
       support_frequency: SupportFrequency.ONE_TIME,
       support_details: "",
+      laptop_quantity: 1,
+      motorbike_quantity: 1,
+      components_quantity: 1,
+      tuition_amount: null,
+      tuition_frequency: SupportFrequency.ONE_TIME,
     },
   });
+
+  // Watch support_types to show/hide conditional fields
+  const selectedSupportTypes = form.watch("support_types");
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
@@ -93,6 +150,11 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
         support_types: values.support_types,
         support_frequency: values.support_frequency,
         support_details: values.support_details || null,
+        laptop_quantity: values.laptop_quantity || null,
+        motorbike_quantity: values.motorbike_quantity || null,
+        components_quantity: values.components_quantity || null,
+        tuition_amount: values.tuition_amount || null,
+        tuition_frequency: values.tuition_frequency || null,
         status: ApplicationStatus.PENDING,
       });
 
@@ -270,6 +332,115 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                 )}
               />
 
+              {/* Support-specific fields */}
+              {selectedSupportTypes.includes(SupportType.LAPTOP) && (
+                <FormField
+                  control={form.control}
+                  name="laptop_quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng laptop *</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="1" placeholder="Số lượng laptop có thể hỗ trợ" {...field} />
+                      </FormControl>
+                      <FormDescription>Số lượng laptop bạn có thể hỗ trợ</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedSupportTypes.includes(SupportType.MOTORBIKE) && (
+                <FormField
+                  control={form.control}
+                  name="motorbike_quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng xe máy *</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="1" placeholder="Số lượng xe máy có thể hỗ trợ" {...field} />
+                      </FormControl>
+                      <FormDescription>Số lượng xe máy bạn có thể hỗ trợ</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedSupportTypes.includes(SupportType.COMPONENTS) && (
+                <FormField
+                  control={form.control}
+                  name="components_quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số lượng linh kiện *</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="1" placeholder="Số lượng linh kiện có thể hỗ trợ" {...field} />
+                      </FormControl>
+                      <FormDescription>Số lượng linh kiện/bộ linh kiện bạn có thể hỗ trợ</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedSupportTypes.includes(SupportType.TUITION) && (
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <h4 className="font-medium">Thông tin hỗ trợ học phí</h4>
+                  <FormField
+                    control={form.control}
+                    name="tuition_amount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Số tiền hỗ trợ (VNĐ) *</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="100000" step="50000" placeholder="Ví dụ: 1000000" {...field} />
+                        </FormControl>
+                        <FormDescription>Số tiền bạn có thể hỗ trợ cho học phí (tối thiểu 100,000 VNĐ)</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="tuition_frequency"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tần suất hỗ trợ học phí *</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            className="space-y-2"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <RadioGroupItem value={SupportFrequency.ONE_TIME} id="tuition_one_time" />
+                              <FormLabel htmlFor="tuition_one_time" className="font-normal cursor-pointer">
+                                <div>
+                                  <div className="font-medium">Một lần</div>
+                                  <div className="text-sm text-muted-foreground">Hỗ trợ một lần duy nhất</div>
+                                </div>
+                              </FormLabel>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <RadioGroupItem value={SupportFrequency.RECURRING} id="tuition_recurring" />
+                              <FormLabel htmlFor="tuition_recurring" className="font-normal cursor-pointer">
+                                <div>
+                                  <div className="font-medium">Định kỳ</div>
+                                  <div className="text-sm text-muted-foreground">Hỗ trợ định kỳ (hàng tháng/học kỳ)</div>
+                                </div>
+                              </FormLabel>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
               <FormField
                 control={form.control}
                 name="support_details"
@@ -278,12 +449,12 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                     <FormLabel>Chi tiết khả năng hỗ trợ</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Ví dụ: Có thể hỗ trợ 1 laptop, 500k/tháng cho 1 sinh viên, hoặc học phí khoảng 5 triệu/học kỳ..."
+                        placeholder="Ví dụ: Laptop Dell cũ đã qua sử dụng, linh kiện RAM 8GB, hỗ trợ học phí theo từng học kỳ..."
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      Tùy chọn, nhưng giúp chúng tôi hiểu rõ hơn về khả năng hỗ trợ của bạn
+                      Tùy chọn, mô tả chi tiết về các mặt hàng hoặc điều kiện hỗ trợ
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

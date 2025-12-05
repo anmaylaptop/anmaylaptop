@@ -13,6 +13,11 @@ export interface DonorData {
   support_types: string[];
   support_frequency: string;
   support_details: string | null;
+  laptop_quantity: number | null;
+  motorbike_quantity: number | null;
+  components_quantity: number | null;
+  tuition_amount: number | null;
+  tuition_frequency: string | null;
   support_end_date: string | null;
   is_active: boolean;
   notes: string | null;
