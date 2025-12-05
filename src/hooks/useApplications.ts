@@ -154,27 +154,117 @@ export function useUpdateApplicationStatus() {
         updateData.reviewed_by = user.id;
       }
 
-      const { data, error } = await supabase
+      // Update application status
+      const { data: applicationData, error: updateError } = await supabase
         .from(table)
         .update(updateData)
         .eq("id", id)
         .select()
         .single();
 
-      if (error) {
-        console.error(`Error updating ${type} application:`, error);
-        throw error;
+      if (updateError) {
+        console.error(`Error updating ${type} application:`, updateError);
+        throw updateError;
       }
 
-      return data;
+      // If approved, create corresponding donor/student record
+      if (status === "approved") {
+        // Check if record already exists to prevent duplicates
+        const targetTable = type === "donor" ? "donors" : "students";
+        const { data: existingRecord } = await supabase
+          .from(targetTable)
+          .select("id")
+          .eq("application_id", id)
+          .single();
+
+        if (!existingRecord) {
+          if (type === "donor") {
+            // Create donor record from application
+          const donorData = {
+            application_id: applicationData.id,
+            full_name: applicationData.full_name,
+            birth_year: applicationData.birth_year,
+            phone: applicationData.phone,
+            address: applicationData.address,
+            facebook_link: applicationData.facebook_link,
+            support_types: applicationData.support_types,
+            support_frequency: applicationData.support_frequency,
+            support_details: applicationData.support_details,
+            support_end_date: null,
+            is_active: true,
+            notes: applicationData.notes,
+          };
+
+          const { error: donorError } = await supabase
+            .from("donors")
+            .insert(donorData);
+
+          if (donorError) {
+            console.error("Error creating donor record:", donorError);
+            throw donorError;
+          }
+        } else {
+          // Create student record from application
+          const studentData = {
+            application_id: applicationData.id,
+            full_name: applicationData.full_name,
+            birth_year: applicationData.birth_year,
+            phone: applicationData.phone,
+            address: applicationData.address,
+            facebook_link: applicationData.facebook_link,
+            academic_year: applicationData.academic_year,
+            difficult_situation: applicationData.difficult_situation,
+            need_laptop: applicationData.need_laptop,
+            laptop_received: false,
+            laptop_received_date: null,
+            need_motorbike: applicationData.need_motorbike,
+            motorbike_received: false,
+            motorbike_received_date: null,
+            need_tuition: applicationData.need_tuition,
+            tuition_supported: false,
+            tuition_support_start_date: null,
+            need_components: applicationData.need_components,
+            components_details: applicationData.components_details,
+            components_received: false,
+            notes: applicationData.notes,
+          };
+
+          const { error: studentError } = await supabase
+            .from("students")
+            .insert(studentData);
+
+          if (studentError) {
+            console.error("Error creating student record:", studentError);
+            throw studentError;
+          }
+        }
+        }
+      }
+
+      return applicationData;
     },
     onSuccess: (_, variables) => {
       // Invalidate queries to refresh the data
       queryClient.invalidateQueries({ queryKey: ["donor-applications"] });
       queryClient.invalidateQueries({ queryKey: ["student-applications"] });
       
+      // Also invalidate donors/students queries if approved
+      if (variables.status === "approved") {
+        if (variables.type === "donor") {
+          queryClient.invalidateQueries({ queryKey: ["donors"] });
+        } else {
+          queryClient.invalidateQueries({ queryKey: ["students"] });
+        }
+      }
+      
       const statusText = variables.status === "approved" ? "đã được duyệt" : "đã bị từ chối";
-      toast.success(`Đơn đăng ký ${statusText} thành công`);
+      const typeText = variables.type === "donor" ? "nhà hảo tâm" : "sinh viên";
+      
+      if (variables.status === "approved") {
+        toast.success(`Đơn đăng ký ${statusText} thành công. ${typeText.charAt(0).toUpperCase() + typeText.slice(1)} đã được thêm vào danh sách.`);
+      } else {
+        toast.success(`Đơn đăng ký ${statusText} thành công`);
+      }
     },
     onError: (error) => {
       console.error("Error updating application status:", error);
