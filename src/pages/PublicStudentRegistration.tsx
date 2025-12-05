@@ -4,6 +4,7 @@ import { Laptop, ArrowLeft, CheckCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SEO } from "@/components/SEO";
 
 export default function PublicStudentRegistration() {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ export default function PublicStudentRegistration() {
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+        <SEO
+          title="Đăng ký thành công - Sinh viên"
+          description="Đơn đăng ký của bạn đã được gửi đến dự án Ăn mày laptop. Chúng tôi sẽ xem xét và liên hệ với bạn sớm nhất."
+        />
         {/* Header */}
         <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container flex h-16 items-center gap-4">
@@ -77,6 +82,11 @@ export default function PublicStudentRegistration() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+      <SEO
+        title="Đăng ký sinh viên cần hỗ trợ - Ăn mày laptop"
+        description="Sinh viên có hoàn cảnh khó khăn đăng ký nhận hỗ trợ laptop, xe máy, linh kiện hoặc học phí từ dự án Ăn mày laptop."
+        keywords="đăng ký sinh viên, hỗ trợ sinh viên, laptop miễn phí, xe máy miễn phí, học phí, ăn mày laptop"
+      />
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center gap-4">

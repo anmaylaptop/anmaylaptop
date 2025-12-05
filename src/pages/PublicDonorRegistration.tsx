@@ -4,6 +4,7 @@ import { Laptop, ArrowLeft, CheckCircle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { SEO } from "@/components/SEO";
 
 export default function PublicDonorRegistration() {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ export default function PublicDonorRegistration() {
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+        <SEO
+          title="Đăng ký thành công - Nhà hảo tâm"
+          description="Cảm ơn bạn đã đăng ký tham gia dự án Ăn mày laptop. Chúng tôi sẽ xem xét và liên hệ với bạn sớm nhất."
+        />
         {/* Header */}
         <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="container flex h-16 items-center gap-4">
@@ -76,6 +81,11 @@ export default function PublicDonorRegistration() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+      <SEO
+        title="Đăng ký nhà hảo tâm - Ăn mày laptop"
+        description="Đăng ký trở thành nhà hảo tâm của dự án Ăn mày laptop. Hỗ trợ sinh viên khó khăn với laptop, xe máy, linh kiện và học phí."
+        keywords="đăng ký nhà hảo tâm, từ thiện, hỗ trợ sinh viên, ăn mày laptop"
+      />
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center gap-4">

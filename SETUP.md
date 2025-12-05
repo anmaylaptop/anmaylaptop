@@ -49,6 +49,9 @@ Lấy thông tin này từ:
 ```bash
 cd connect-uplift
 npm install
+
+# Install SEO dependencies
+npm install react-helmet-async
 ```
 
 ## Chạy Development Server
@@ -158,6 +161,43 @@ npm run dev
 - [ ] Trang quản lý Linh kiện
 - [ ] Trang báo cáo và thống kê
 
+## SEO Configuration
+
+The project has been configured with comprehensive SEO support:
+
+✅ **Dynamic meta tags** using react-helmet-async
+✅ **Open Graph tags** for Facebook sharing
+✅ **Twitter Card tags** for Twitter sharing
+✅ **Canonical URLs** for each page
+✅ **robots.txt** with proper indexing rules
+✅ **Structured data ready** for rich snippets
+
+### SEO Files
+- `src/components/SEO.tsx` - Reusable SEO component
+- `public/robots.txt` - Search engine crawling rules
+- `prerender.config.ts` - Pre-rendering configuration
+- `SEO-SETUP.md` - Complete SEO documentation
+
+### Public Pages with SEO
+All public pages have optimized meta tags:
+- `/` - Landing page
+- `/dang-ky-nha-hao-tam` - Donor registration
+- `/dang-ky-sinh-vien` - Student registration
+
+### Testing SEO
+```bash
+# Run development server
+npm run dev
+
+# View page source to verify meta tags
+# Test with:
+# - Facebook Debugger: https://developers.facebook.com/tools/debug/
+# - Twitter Card Validator: https://cards-dev.twitter.com/validator
+# - Google Rich Results Test: https://search.google.com/test/rich-results
+```
+
+See `SEO-SETUP.md` for detailed SEO configuration and optimization guide.
+
 ## Lưu ý
 
 - Form validation đã được cài đặt đầy đủ theo requirements
@@ -168,3 +208,4 @@ npm run dev
 - Form đăng ký là public, không cần authentication
 - Admin panel yêu cầu authentication để quản lý
 - Cần cấu hình admin role riêng trong production để hạn chế quyền truy cập
+- **SEO:** Public pages được tối ưu cho search engines với meta tags đầy đủ

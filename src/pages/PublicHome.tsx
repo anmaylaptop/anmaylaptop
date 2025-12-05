@@ -2,10 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, Laptop, GraduationCap, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { SEO } from "@/components/SEO";
 
 export default function PublicHome() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+      <SEO
+        title="Ăn mày laptop - Kết nối yêu thương, lan tỏa hy vọng"
+        description="Dự án từ thiện thu gom laptop cũ, sửa chữa và tặng cho sinh viên có hoàn cảnh khó khăn. Kết nối nhà hảo tâm với sinh viên cần hỗ trợ laptop, xe máy, linh kiện và học phí."
+        keywords="từ thiện, laptop, sinh viên, hỗ trợ, ăn mày laptop, laptop cũ, xe máy, học phí, linh kiện, Trần Trọng An"
+      />
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
