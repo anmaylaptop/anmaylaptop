@@ -10,7 +10,7 @@ interface SEOProps {
 
 export function SEO({
   title = "Ăn mày laptop - Kết nối yêu thương, lan tỏa hy vọng",
-  description = "Dự án từ thiện thu gom laptop cũ, sửa chữa và tặng cho sinh viên có hoàn cảnh khó khăn. Kết nối nhà hảo tâm với sinh viên cần hỗ trợ laptop, xe máy, linh kiện và học phí.",
+  description = "Hoạt động thiện nguyện thu gom laptop cũ, sửa chữa và tặng cho sinh viên có hoàn cảnh khó khăn. Kết nối nhà hảo tâm với sinh viên cần hỗ trợ laptop, xe máy, linh kiện và học phí.",
   keywords = "từ thiện, laptop, sinh viên, hỗ trợ, ăn mày laptop, laptop cũ, xe máy, học phí, linh kiện",
   ogImage = "https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-6/561346745_10163260236397768_958191264658348908_n.jpg",
   ogUrl,

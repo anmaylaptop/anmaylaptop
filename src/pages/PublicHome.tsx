@@ -9,7 +9,7 @@ export default function PublicHome() {
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       <SEO
         title="Ăn mày laptop - Kết nối yêu thương, lan tỏa hy vọng"
-        description="Dự án từ thiện thu gom laptop cũ, sửa chữa và tặng cho sinh viên có hoàn cảnh khó khăn. Kết nối nhà hảo tâm với sinh viên cần hỗ trợ laptop, xe máy, linh kiện và học phí."
+        description="Hoạt động thiện nguyện thu gom laptop cũ, sửa chữa và tặng cho sinh viên có hoàn cảnh khó khăn. Kết nối nhà hảo tâm với sinh viên cần hỗ trợ laptop, xe máy, linh kiện và học phí."
         keywords="từ thiện, laptop, sinh viên, hỗ trợ, ăn mày laptop, laptop cũ, xe máy, học phí, linh kiện, Trần Trọng An"
       />
       {/* Header */}
@@ -30,7 +30,7 @@ export default function PublicHome() {
         <div className="mx-auto max-w-3xl text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
             <Heart className="h-4 w-4" />
-            Dự án từ thiện
+            Hoạt động thiện nguyện
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight">

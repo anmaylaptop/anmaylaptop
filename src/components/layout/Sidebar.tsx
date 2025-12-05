@@ -9,6 +9,7 @@ import {
   BarChart3,
   Heart,
   Settings,
+  MapPin,
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,6 +33,7 @@ const navigation = [
   { name: "Xe máy", href: "/xe-may", icon: Bike },
   { name: "Linh kiện", href: "/linh-kien", icon: Wrench },
   { name: "Học phí", href: "/hoc-phi", icon: GraduationCap },
+  { name: "Khu vực", href: "/khu-vuc", icon: MapPin },
   { name: "Báo cáo", href: "/bao-cao", icon: BarChart3 },
 ];
 

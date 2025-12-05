@@ -19,6 +19,7 @@ import Components from "./pages/Components";
 import Tuition from "./pages/Tuition";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Areas from "./pages/Areas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -107,6 +108,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Reports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/khu-vuc"
+              element={
+                <ProtectedRoute>
+                  <Areas />
                 </ProtectedRoute>
               }
             />

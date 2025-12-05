@@ -28,6 +28,14 @@ import {
   getAllAcademicYears,
   ApplicationStatus
 } from "@/enums";
+import { useAreas } from "@/hooks/useAreas";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   full_name: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
@@ -38,6 +46,7 @@ const formSchema = z.object({
   phone: z.string().regex(/^[0-9]{10,11}$/, "Số điện thoại phải có 10-11 chữ số"),
   address: z.string().min(5, "Địa chỉ phải có ít nhất 5 ký tự"),
   facebook_link: z.string().url("Link Facebook không hợp lệ").optional().or(z.literal("")),
+  area_id: z.string().min(1, "Vui lòng chọn khu vực"),
   academic_year: z.nativeEnum(AcademicYear, {
     required_error: "Vui lòng chọn năm học",
   }),
@@ -82,6 +91,7 @@ const needOptions = [
 
 export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistrationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: areas = [], isLoading: isLoadingAreas } = useAreas({ isActive: true });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -91,6 +101,7 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
       phone: "",
       address: "",
       facebook_link: "",
+      area_id: "",
       academic_year: AcademicYear.YEAR_1,
       difficult_situation: "",
       need_laptop: false,
@@ -112,6 +123,7 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
         phone: values.phone,
         address: values.address,
         facebook_link: values.facebook_link || null,
+        area_id: values.area_id,
         academic_year: values.academic_year,
         difficult_situation: values.difficult_situation,
         need_laptop: values.need_laptop,
@@ -217,6 +229,47 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
                       <Input placeholder="https://facebook.com/username" {...field} />
                     </FormControl>
                     <FormDescription>Tùy chọn, nhưng nên cung cấp để dễ liên lạc</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="area_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Khu vực *</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || undefined}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn khu vực..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {isLoadingAreas ? (
+                          <SelectItem value="loading" disabled>
+                            Đang tải...
+                          </SelectItem>
+                        ) : areas.length === 0 ? (
+                          <SelectItem value="empty" disabled>
+                            Không có khu vực nào
+                          </SelectItem>
+                        ) : (
+                          areas.map((area) => (
+                            <SelectItem key={area.id} value={area.id}>
+                              {area.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Chọn khu vực của bạn để dễ dàng kết nối với nhà hảo tâm cùng địa bàn
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

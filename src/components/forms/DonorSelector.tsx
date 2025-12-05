@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useDonors } from "@/hooks/useDonors";
+import { useAreas } from "@/hooks/useAreas";
 import { Label } from "@/components/ui/label";
 import { SupportFrequency } from "@/enums";
 
@@ -31,6 +32,7 @@ export function DonorSelector({ supportType }: DonorSelectorProps) {
   const [donorMode, setDonorMode] = useState<"existing" | "new">("existing");
   
   const { data: donors = [], isLoading } = useDonors({ isActive: true });
+  const { data: areas = [], isLoading: isLoadingAreas } = useAreas({ isActive: true });
 
   // Filter donors based on support type
   const filteredDonors = donors.filter((donor) =>
@@ -51,6 +53,7 @@ export function DonorSelector({ supportType }: DonorSelectorProps) {
               form.setValue("donor_address", "");
               form.setValue("donor_birth_year", null);
               form.setValue("donor_facebook_link", "");
+              form.setValue("donor_area_id", "");
             } else {
               form.setValue("donor_id", null);
             }
@@ -191,6 +194,44 @@ export function DonorSelector({ supportType }: DonorSelectorProps) {
                     value={field.value || ""}
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="donor_area_id"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Khu vực *</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value || undefined}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn khu vực..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {isLoadingAreas ? (
+                      <SelectItem value="loading" disabled>
+                        Đang tải...
+                      </SelectItem>
+                    ) : areas.length === 0 ? (
+                      <SelectItem value="empty" disabled>
+                        Không có khu vực nào
+                      </SelectItem>
+                    ) : (
+                      areas.map((area) => (
+                        <SelectItem key={area.id} value={area.id}>
+                          {area.name}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
