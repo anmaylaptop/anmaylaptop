@@ -63,7 +63,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: "",
-      birth_year: new Date().getFullYear() - 30,
+      birth_year: null,
       phone: "",
       address: "",
       facebook_link: "",
@@ -136,9 +136,9 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                 name="birth_year"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Năm sinh *</FormLabel>
+                    <FormLabel>Năm sinh</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="1990" {...field} />
+                      <Input type="number" placeholder="Ghi năm sinh cho tiện xưng hô, bỏ qua nếu không cần" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,7 +152,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                   <FormItem>
                     <FormLabel>Số điện thoại *</FormLabel>
                     <FormControl>
-                      <Input placeholder="0901234567" {...field} />
+                      <Input placeholder="Cần thiết để liên lạc" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,7 +182,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                     <FormControl>
                       <Input placeholder="https://facebook.com/username" {...field} />
                     </FormControl>
-                    <FormDescription>Tùy chọn, nhưng nên cung cấp để dễ liên lạc</FormDescription>
+                    <FormDescription>Tùy chọn, nhưng nên cung cấp để dễ liên lạc và cập nhật thông tin trên Facebook</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -270,7 +270,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
                     <FormLabel>Chi tiết khả năng hỗ trợ</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Ví dụ: Có thể hỗ trợ 2-3 laptop/tháng, hoặc học phí khoảng 5 triệu/học kỳ..."
+                        placeholder="Ví dụ: Có thể hỗ trợ 1 laptop, 500k/tháng cho 1 sinh viên, hoặc học phí khoảng 5 triệu/học kỳ..."
                         {...field}
                       />
                     </FormControl>

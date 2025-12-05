@@ -81,7 +81,7 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
     resolver: zodResolver(formSchema),
     defaultValues: {
       full_name: "",
-      birth_year: new Date().getFullYear() - 20,
+      birth_year: null,
       phone: "",
       address: "",
       facebook_link: "",
@@ -166,7 +166,7 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
                   <FormItem>
                     <FormLabel>Năm sinh *</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="2003" {...field} />
+                      <Input type="number" placeholder="Điền năm sinh của em" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -180,7 +180,7 @@ export function StudentRegistrationForm({ onSuccess, onCancel }: StudentRegistra
                   <FormItem>
                     <FormLabel>Số điện thoại *</FormLabel>
                     <FormControl>
-                      <Input placeholder="0901234567" {...field} />
+                      <Input placeholder="Cần thiết để liên lạc và hỗ trợ" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
