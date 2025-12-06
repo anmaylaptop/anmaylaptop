@@ -41,23 +41,23 @@ export function AppSidebar() {
   const location = useLocation();
 
   return (
-    <Sidebar variant= "inset" collapsible = "icon" >
+    <Sidebar variant= "inset" collapsible = "icon">
       <SidebarHeader>
-      <div className="flex h-12 items-center gap-3 px-2" >
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary" >
+      <div className="flex h-12 items-center gap-3 px-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
           <Laptop className="h-4 w-4 text-primary-foreground" />
             </div>
-            < div className = "grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden" >
-              <span className="truncate font-semibold text-background" > Ăn mày laptop </span>
-                < span className = "truncate text-xs text-muted-foreground" > Hệ thống quản lý </span>
+            <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
+              <span className="truncate font-semibold text-background"> Ăn mày laptop </span>
+                <span className="truncate text-xs text-muted-foreground"> Hệ thống quản lý </span>
                   </div>
                   </div>
                   </SidebarHeader>
 
-                  < SidebarContent >
+                  <SidebarContent>
                   <SidebarGroup>
                   <SidebarGroupLabel>Menu </SidebarGroupLabel>
-                  < SidebarGroupContent >
+                  <SidebarGroupContent>
                   <SidebarMenu>
                   {
                     navigation.map((item) => (
@@ -69,7 +69,7 @@ export function AppSidebar() {
                       >
                       <Link to={ item.href } >
                       <item.icon />
-                      < span > { item.name } </span>
+                      <span> { item.name } </span>
                       </Link>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -80,13 +80,13 @@ export function AppSidebar() {
                   </SidebarGroup>
                   </SidebarContent>
 
-                  < SidebarFooter >
+                  <SidebarFooter>
                   <SidebarMenu>
                   <SidebarMenuItem>
-                  <SidebarMenuButton asChild tooltip = "Cài đặt" >
-                    <Link to="/cai-dat" >
+                  <SidebarMenuButton asChild tooltip = "Cài đặt">
+                    <Link to="/cai-dat">
                       <Settings />
-                      < span > Cài đặt </span>
+                      <span> Cài đặt </span>
                         </Link>
                         </SidebarMenuButton>
                         </SidebarMenuItem>

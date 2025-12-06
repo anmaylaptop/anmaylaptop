@@ -13,9 +13,9 @@ export function MainLayout({ children, title, description }: MainLayoutProps) {
   return (
     <SidebarProvider>
     <AppSidebar />
-    < SidebarInset >
+    <SidebarInset>
     <Header title= { title } description = { description } />
-      <main className="flex-1 p-6 overflow-x-hidden" >
+      <main className="flex-1 p-6 overflow-x-hidden">
         { children }
         </main>
         </SidebarInset>
