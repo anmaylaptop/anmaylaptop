@@ -247,11 +247,11 @@ export default function PublicHome() {
   <section className="container pb-12 md:pb-24">
     <div className="mx-auto max-w-5xl">
       <Card className="overflow-hidden border-2 border-primary/20">
-        <div className="relative">
+        <div className="relative w-full" style={{ aspectRatio: '1020/256' }}>
           <img
                 src="https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-6/561346745_10163260236397768_958191264658348908_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_eui2=AeEaVM4IpZBcMOirO4faNEcLOSLcOo0O6ng5Itw6jQ7qeE7GiJo-4Ko46i1pCqDNTTFiWWj-aUVKsPzD8cvgEgM9&_nc_ohc=GzLIqXAcOxYQ7kNvwGR9ix5&_nc_oc=AdnPFBDOl-PxMtMqQ6ISJ8iXYAXxjIVfnw3rRdvVRXqZWs7o17ym4Dp0UJb4rpXEXl8L49l7Q5dlVsNdOcZwWSWz&_nc_zt=23&_nc_ht=scontent.fhan14-1.fna&_nc_gid=2zD_33yDjceuhg7VrjK0jA&oh=00_AflU8zlr_Z_L3V01REUKrvexSzfoBsK2VcRrD2CAHKQVTQ&oe=69390232"
   alt = "Nguyên tắc hoạt động dự án"
-  className = "w-full h-48 md:h-64 object-cover"
+  className = "w-full h-full object-cover"
     />
     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
       </div>
@@ -301,26 +301,26 @@ export default function PublicHome() {
 
   {/* About the Founder */ }
   <section className="container pb-12 md:pb-24">
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-5xl">
       <h3 className="text-2xl md:text-3xl font-bold text-center mb-8">
         Người sáng lập dự án
           </h3>
-          <Card className="border-2">
-            <CardContent className="pt-6">
-              <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
+          <Card className="border-2 border-primary/30 hover:border-primary transition-colors">
+            <CardContent className="p-6 md:p-8">
+              <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
                 <div className="flex-shrink-0">
                   <img
                     src="https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/415498574_10161009318992768_4314971227842060491_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFldh3qoDvV53kpwQRG_R3yk75oTM2i-N6TvmhMzaL43sNaql1GfVHaVQY4L7ZbmZtcvBQ97ISqXlGpXxuiOStD&_nc_ohc=kaanxJhIvD4Q7kNvwExrXRN&_nc_oc=Adnlq_gBG8ap7w9Ety7vh33rsmdYUB47nwdPbahaf8XEUPu8uMvJZGx0rsMONYEkh0PaJLoNwCANEn3vIAJz7cy5&_nc_zt=23&_nc_ht=scontent.fhan14-2.fna&_nc_gid=p1MyqXbtyn81zCtKp-2vvw&oh=00_AfkX_usPANIZpFRC6yiulxfnJxg8QXhOiMsObGlVzrqFjg&oe=6938F0F2"
   alt = "Trần Trọng An"
-  className = "w-24 h-24 rounded-full object-cover border-2 border-primary/20"
+  className = "w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-primary/20"
     />
     </div>
-    <div className="flex-1 text-center md:text-left">
-      <h4 className="text-xl font-bold mb-2"> Trần Trọng An </h4>
-        <p className="text-muted-foreground mb-4">
+    <div className="flex-1 text-center md:text-left space-y-4">
+      <h4 className="text-xl md:text-2xl font-bold mb-2"> Trần Trọng An </h4>
+        <p className="text-base md:text-lg text-muted-foreground mb-4">
           Người sáng lập và điều hành dự án "Ăn mày laptop"
             </p>
-            <p className="mb-4">
+            <p className="text-sm md:text-base mb-4">
               Với mong muốn giúp đỡ các sinh viên có hoàn cảnh khó khăn có thể tiếp cận với
                     công nghệ và tiếp tục con đường học vấn, anh Trần Trọng An đã sáng lập dự án
                     thu gom laptop cũ để sửa chữa và trao tặng cho sinh viên.Dự án hoạt động dựa trên
@@ -347,41 +347,41 @@ export default function PublicHome() {
 
   {/* Open Letter Section */ }
   <section className="container pb-12 md:pb-24">
-    <div className="mx-auto max-w-4xl">
-      <Card className="border-2 border-primary/20 bg-primary/5">
-        <CardHeader>
+    <div className="mx-auto max-w-5xl">
+      <Card className="border-2 border-primary/30 hover:border-primary transition-colors bg-gradient-to-br from-primary/5 to-primary/10">
+        <CardHeader className="p-6 md:p-8">
         <CardTitle className="text-2xl md:text-3xl text-center">
           Thư ngỏ từ người sáng lập
             </CardTitle>
-            <CardDescription className="text-center text-base">
+            <CardDescription className="text-center text-base md:text-lg mt-2">
               Nguyên tắc hoạt động và những điều cần lưu ý khi tham gia dự án
                 </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="p-6 md:p-8 pt-0 space-y-6">
                   <div className="prose prose-sm max-w-none text-muted-foreground">
-                    <p className="font-semibold text-foreground text-center mb-6">
+                    <p className="font-semibold text-foreground text-center mb-6 text-base md:text-lg">
                       #ĂnMàyLapTop là hoạt động thiện nguyện cá nhân với các nguyên tắc cụ thể:
   </p>
 
-    <div className="grid md:grid-cols-2 gap-8">
-      <div className="space-y-3">
-        <h4 className="font-bold text-foreground text-lg flex items-center gap-2">
-          <Heart className="h-5 w-5 text-primary" />
+    <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+      <div className="space-y-4">
+        <h4 className="font-bold text-foreground text-lg md:text-xl flex items-center gap-2">
+          <Heart className="h-5 w-5 md:h-6 md:w-6 text-primary" />
             Đối với nhà hảo tâm
               </h4>
-              <ul className="space-y-2 list-disc pl-5">
+              <ul className="space-y-2 md:space-y-3 list-disc pl-5 text-sm md:text-base">
                 <li>Vui lòng chụp ảnh và mô tả tình trạng máy trước khi gửi.</li>
                   <li> Laptop sản xuất sau 2015 hoặc Core i3 trở lên sẽ tối ưu nhất cho việc học tập.</li>
                     <li> Ghi rõ thông tin liên lạc(Link Facebook / SĐT) để dự án phản hồi khi nhận máy.</li>
                       </ul>
                       </div>
 
-                      <div className="space-y-3">
-                        <h4 className="font-bold text-foreground text-lg flex items-center gap-2">
-                          <GraduationCap className="h-5 w-5 text-primary" />
+                      <div className="space-y-4">
+                        <h4 className="font-bold text-foreground text-lg md:text-xl flex items-center gap-2">
+                          <GraduationCap className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                             Đối với sinh viên
                               </h4>
-                              <ul className="space-y-2 list-disc pl-5">
+                              <ul className="space-y-2 md:space-y-3 list-disc pl-5 text-sm md:text-base">
                                 <li>Cung cấp đầy đủ, trung thực thông tin cá nhân và hoàn cảnh gia đình.</li>
                                   <li> Gửi kèm hình ảnh minh chứng cụ thể.</li>
                                     <li> Việc tặng máy dựa trên sự trung thực và mức độ cấp thiết của hoàn cảnh.</li>
@@ -389,8 +389,8 @@ export default function PublicHome() {
                                       </div>
                                       </div>
 
-                                      <div className="mt-6 p-4 bg-background rounded-lg border-l-4 border-primary">
-                                        <p className="italic text-foreground/80">
+                                      <div className="mt-6 md:mt-8 p-4 md:p-6 bg-background rounded-lg border-l-4 border-primary">
+                                        <p className="italic text-foreground/80 text-sm md:text-base">
                                           <strong>Lưu ý quan trọng: </strong> Tôi <strong>KHÔNG</strong > nhận tiền tài trợ và <strong> KHÔNG </strong> làm trung gian nhận tiền. 
                       Mọi liên lạc nhân danh tôi mà không có tin nhắn báo trước từ Facebook chính chủ đều không liên quan đến dự án.
                     </p>
