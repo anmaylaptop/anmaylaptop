@@ -849,6 +849,14 @@ export function usePublicComponents(filters: { search?: string; page?: number; p
 
       if (countError) {
         console.error("Error fetching public components count:", countError);
+        console.error("Count query details:", { 
+          status: "needs_support",
+          search: filters.search,
+          errorCode: countError.code,
+          errorMessage: countError.message,
+          errorDetails: countError.details,
+          errorHint: countError.hint
+        });
         throw countError;
       }
 
@@ -876,8 +884,27 @@ export function usePublicComponents(filters: { search?: string; page?: number; p
 
       if (error) {
         console.error("Error fetching public components:", error);
+        console.error("Data query details:", {
+          status: "needs_support",
+          search: filters.search,
+          page,
+          pageSize,
+          from,
+          to,
+          errorCode: error.code,
+          errorMessage: error.message,
+          errorDetails: error.details,
+          errorHint: error.hint
+        });
         throw error;
       }
+
+      console.log("Public components query result:", {
+        count: data?.length || 0,
+        totalCount: count,
+        page,
+        pageSize
+      });
 
       const transformedData = (data || []).map((component: any) => ({
         id: component.id,
