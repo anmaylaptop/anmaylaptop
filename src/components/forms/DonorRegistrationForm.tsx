@@ -159,7 +159,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
       if (error) throw error;
 
       toast.success("Đăng ký thành công!", {
-        description: "Đơn đăng ký của bạn đã được gửi và đang chờ xét duyệt.",
+        description: "Đơn đăng ký của bạn đã được gửi và đang chờ xử lý và sẽ liên hệ.",
       });
 
       form.reset();

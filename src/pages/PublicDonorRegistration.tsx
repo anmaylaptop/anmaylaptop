@@ -19,7 +19,7 @@ export default function PublicDonorRegistration() {
       <div className="min-h-screen bg-gradient-to-b from-background to-muted">
         <SEO
           title="Đăng ký thành công - Nhà hảo tâm"
-          description="Cảm ơn bạn đã đăng ký tham gia dự án Ăn mày laptop. Chúng tôi sẽ xem xét và liên hệ với bạn sớm nhất."
+          description="Cảm ơn bạn đã đăng ký tham gia dự án Ăn mày laptop. Chúng tôi sẽ xử lý và liên hệ với bạn sớm nhất."
         />
         {/* Header */}
         <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,7 +47,7 @@ export default function PublicDonorRegistration() {
               <CardContent className="space-y-6">
                 <div className="space-y-4 text-muted-foreground">
                   <p>
-                    Đơn đăng ký của bạn đã được gửi thành công và đang chờ xét duyệt từ đội ngũ quản lý dự án.
+                    Đơn đăng ký của bạn đã được gửi thành công và đang chờ xử lý và sẽ liên hệ.
                   </p>
                   <p>
                     Chúng tôi sẽ xem xét thông tin và liên hệ với bạn qua số điện thoại hoặc Facebook đã đăng ký trong thời gian sớm nhất.
@@ -55,9 +55,9 @@ export default function PublicDonorRegistration() {
                   <div className="p-4 rounded-lg bg-muted">
                     <p className="font-semibold mb-2">Bước tiếp theo:</p>
                     <ul className="space-y-1 text-sm">
-                      <li>• Đội ngũ sẽ xác minh thông tin đăng ký</li>
+                      <li>• Đội ngũ sẽ xử lý thông tin đăng ký</li>
                       <li>• Bạn sẽ nhận được thông báo qua điện thoại/Facebook</li>
-                      <li>• Sau khi được duyệt, chúng tôi sẽ kết nối bạn với sinh viên phù hợp</li>
+                      <li>• Chúng tôi sẽ kết nối bạn với sinh viên phù hợp</li>
                     </ul>
                   </div>
                 </div>
