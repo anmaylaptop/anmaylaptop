@@ -173,6 +173,7 @@ export default function Components() {
                 <TableHead>Model</TableHead>
                 <TableHead>Người tặng</TableHead>
                 <TableHead>Trạng thái</TableHead>
+                <TableHead>Người nhận hỗ trợ</TableHead>
                 <TableHead>Ghi chú</TableHead>
                 <TableHead>Người nhận</TableHead>
                 <TableHead>Ngày nhận</TableHead>
@@ -193,6 +194,25 @@ export default function Components() {
                     <StatusBadge status={statusColors[comp.status] || "pending"}>
                       {statusLabels[comp.status] || comp.status}
                     </StatusBadge>
+                  </TableCell>
+                  <TableCell>
+                    {comp.supporter_name ? (
+                      <div className="space-y-1">
+                        <div className="font-medium">{comp.supporter_name}</div>
+                        {comp.supporter_phone && (
+                          <div className="text-xs text-muted-foreground">
+                            <a
+                              href={`tel:${comp.supporter_phone}`}
+                              className="hover:text-primary hover:underline"
+                            >
+                              {comp.supporter_phone}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </TableCell>
                   <TableCell className="max-w-[200px] truncate">
                     {comp.notes || comp.condition || "-"}

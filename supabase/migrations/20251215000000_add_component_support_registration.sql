@@ -70,9 +70,11 @@ BEGIN
   RETURNING id INTO v_donor_application_id;
 
   -- Update component status to 'pending_support' (chờ hỗ trợ)
+  -- and link to the donor application
   UPDATE public.components
   SET 
     status = 'pending_support',
+    support_registration_id = v_donor_application_id,
     updated_at = now()
   WHERE id = p_component_id;
 

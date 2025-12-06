@@ -594,9 +594,17 @@ export interface ComponentData {
   delivered_date: string | null;
   created_at: string;
   updated_at: string;
+  support_registration_id?: string | null;
   // Joined data
   donor_name?: string;
   student_name?: string;
+  support_registration?: {
+    full_name: string;
+    phone: string;
+  } | null;
+  // Computed fields
+  supporter_name?: string;
+  supporter_phone?: string;
 }
 
 interface ComponentsResult {
@@ -650,7 +658,8 @@ export function useComponents(filters: InventoryFilters = {}) {
         .select(`
           *,
           donors:donor_id(full_name),
-          students:student_id(full_name)
+          students:student_id(full_name),
+          support_registration:support_registration_id(full_name, phone)
         `)
         .order("component_code", { ascending: false, nullsLast: true });
 
@@ -691,6 +700,8 @@ export function useComponents(filters: InventoryFilters = {}) {
         ...component,
         donor_name: component.donors?.full_name || null,
         student_name: component.students?.full_name || null,
+        supporter_name: component.support_registration?.full_name || null,
+        supporter_phone: component.support_registration?.phone || null,
       })) as ComponentData[];
 
       const totalCount = count || 0;
