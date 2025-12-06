@@ -169,7 +169,7 @@ export default function PublicHome() {
           <div className="p-2 rounded-lg bg-primary/20" >
             <Wrench className="h-6 w-6 text-primary" />
               </div>
-              < CardTitle className = "text-2xl" > Ngân hàng linh kiện </CardTitle>
+              < CardTitle className = "text-2xl" > Linh kiện cần hỗ trợ </CardTitle>
                 </div>
                 < CardDescription className = "text-base" >
                   Xem danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên.
@@ -193,7 +193,7 @@ export default function PublicHome() {
                                             </div>
                                             < Link to = "/ngan-hang-linh-kien" className = "block" >
                                               <Button className="w-full" size = "lg" variant = "default" >
-                                                Xem ngân hàng linh kiện
+                                                Xem Linh kiện cần hỗ trợ
                                                   < ArrowRight className = "ml-2 h-4 w-4" />
                                                     </Button>
                                                     </Link>

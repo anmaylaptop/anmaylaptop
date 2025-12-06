@@ -54,9 +54,9 @@ export default function PublicComponentBank() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted">
       <SEO
-        title="Ngân hàng linh kiện - Ăn mày laptop"
+        title="Linh kiện cần hỗ trợ - Ăn mày laptop"
         description="Danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên có hoàn cảnh khó khăn."
-        keywords="linh kiện, ngân hàng linh kiện, linh kiện laptop, RAM, SSD, CPU, màn hình laptop, ăn mày laptop"
+        keywords="linh kiện, Linh kiện cần hỗ trợ, linh kiện laptop, RAM, SSD, CPU, màn hình laptop, ăn mày laptop"
       />
       
       <PublicHeader />
@@ -65,7 +65,7 @@ export default function PublicComponentBank() {
       <section className="container py-8 md:py-12">
         <div className="mx-auto max-w-4xl text-center space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Ngân hàng linh kiện
+            Linh kiện cần hỗ trợ
           </h2>
           <p className="text-lg text-muted-foreground">
             Danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên có hoàn cảnh khó khăn
