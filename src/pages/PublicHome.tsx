@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Heart, Laptop, GraduationCap, ArrowRight } from "lucide-react";
+import { Heart, Laptop, GraduationCap, ArrowRight, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 
@@ -161,6 +161,48 @@ export default function PublicHome() {
                                             < Link to = "/ngan-hang-laptop" className = "block" >
                                               <Button className="w-full" size = "lg" variant = "default" >
                                                 Xem ngân hàng laptop
+                                                  < ArrowRight className = "ml-2 h-4 w-4" />
+                                                    </Button>
+                                                    </Link>
+                                                    </CardContent>
+                                                    </Card>
+                                                    </div>
+                                                    </section>
+
+  {/* Component Bank Card */ }
+  <section className="container pb-12 md:pb-24" >
+    <div className="max-w-5xl mx-auto" >
+      <Card className="border-2 border-primary/30 hover:border-primary transition-colors bg-gradient-to-br from-primary/5 to-primary/10" >
+        <CardHeader>
+        <div className="flex items-center gap-2 mb-2" >
+          <div className="p-2 rounded-lg bg-primary/20" >
+            <Wrench className="h-6 w-6 text-primary" />
+              </div>
+              < CardTitle className = "text-2xl" > Ngân hàng linh kiện </CardTitle>
+                </div>
+                < CardDescription className = "text-base" >
+                  Xem danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên.
+                  Mỗi linh kiện có mã riêng để bạn có thể tham chiếu khi hỗ trợ.
+              </CardDescription>
+                      </CardHeader>
+                      < CardContent className = "space-y-4" >
+                        <div className="space-y-2 text-sm text-muted-foreground" >
+                          <p className="flex items-start gap-2" >
+                            <span className="text-primary mt-1" >✓</span>
+                              < span > Danh sách linh kiện công khai, minh bạch </span>
+                                </p>
+                                < p className = "flex items-start gap-2" >
+                                  <span className="text-primary mt-1" >✓</span>
+                                    < span > Mã linh kiện rõ ràng để tham chiếu </span>
+                                      </p>
+                                      < p className = "flex items-start gap-2" >
+                                        <span className="text-primary mt-1" >✓</span>
+                                          < span > Link đặt hàng và thông tin nhận hàng sẵn có </span>
+                                            </p>
+                                            </div>
+                                            < Link to = "/ngan-hang-linh-kien" className = "block" >
+                                              <Button className="w-full" size = "lg" variant = "default" >
+                                                Xem ngân hàng linh kiện
                                                   < ArrowRight className = "ml-2 h-4 w-4" />
                                                     </Button>
                                                     </Link>

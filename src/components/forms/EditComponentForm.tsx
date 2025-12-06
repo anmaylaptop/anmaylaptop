@@ -49,6 +49,12 @@ const formSchema = z
     specifications: z.string().optional(),
     condition: z.string().optional(),
     notes: z.string().optional(),
+    purchase_link: z.string().refine(
+      (val) => !val || val === "" || z.string().url().safeParse(val).success,
+      { message: "Vui lòng nhập URL hợp lệ" }
+    ).optional().or(z.literal("")),
+    delivery_address: z.string().optional(),
+    delivery_phone: z.string().optional(),
     status: z.enum(["needs_support", "supported", "available", "assigned", "delivered", "installed"]),
     received_date: z.string().min(1, "Vui lòng chọn ngày nhận"),
   })
@@ -120,6 +126,9 @@ export function EditComponentForm({
       specifications: "",
       condition: "",
       notes: "",
+      purchase_link: "",
+      delivery_address: "",
+      delivery_phone: "",
       status: "needs_support",
       received_date: new Date().toISOString().split("T")[0],
     },
@@ -150,6 +159,9 @@ export function EditComponentForm({
         specifications: component.specifications || "",
         condition: component.condition || "",
         notes: component.notes || "",
+        purchase_link: (component as any).purchase_link || "",
+        delivery_address: (component as any).delivery_address || "",
+        delivery_phone: (component as any).delivery_phone || "",
         status: (component.status === "needs_support" ? "needs_support" : 
                  component.status === "supported" ? "supported" :
                  ["available", "assigned", "delivered", "installed"].includes(component.status) 
@@ -215,6 +227,9 @@ export function EditComponentForm({
           specifications: values.specifications || null,
           condition: values.condition || null,
           notes: values.notes || null,
+          purchase_link: values.purchase_link || null,
+          delivery_address: values.delivery_address || null,
+          delivery_phone: values.delivery_phone || null,
           status: values.status,
           received_date: values.received_date,
         },
@@ -389,6 +404,77 @@ export function EditComponentForm({
                     </FormItem>
                   )}
                 />
+
+                {/* Support Information for Public Component Bank */}
+                <div className="space-y-4 pt-4 border-t">
+                  <h4 className="font-medium">Thông tin hỗ trợ đặt hàng</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Các thông tin này sẽ được hiển thị công khai để người hỗ trợ có thể đặt hàng trực tiếp.
+                  </p>
+
+                  <FormField
+                    control={form.control}
+                    name="purchase_link"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Link đặt hàng</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="https://shopee.vn/... hoặc https://lazada.vn/..."
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Link từ các trang thương mại điện tử (Shopee, Lazada, Tiki, v.v.)
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="delivery_address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Địa chỉ nhận hàng</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Địa chỉ để người hỗ trợ đặt hàng gửi đến..."
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Địa chỉ để người hỗ trợ có thể cung cấp khi đặt hàng
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="delivery_phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Số điện thoại nhận hàng</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="0123456789"
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Số điện thoại để người hỗ trợ có thể cung cấp khi đặt hàng
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
 
               {/* Donor Information - Only show when status is "supported" */}

@@ -584,6 +584,9 @@ export interface ComponentData {
   specifications: string | null;
   condition: string | null;
   notes: string | null;
+  purchase_link: string | null;
+  delivery_address: string | null;
+  delivery_phone: string | null;
   status: string;
   received_date: string;
   assigned_date: string | null;
@@ -795,6 +798,111 @@ export function useCreateComponent() {
     onError: (error) => {
       console.error("Error creating component:", error);
       toast.error("Có lỗi xảy ra khi thêm linh kiện");
+    },
+  });
+}
+
+// Public hook for fetching components that need support (no sensitive info)
+interface PublicComponentData {
+  id: string;
+  component_type: string;
+  brand: string | null;
+  model: string | null;
+  specifications: string | null;
+  condition: string | null;
+  notes: string | null;
+  purchase_link: string | null;
+  delivery_address: string | null;
+  delivery_phone: string | null;
+  status: string;
+  received_date: string;
+  created_at: string;
+}
+
+interface PublicComponentsResult {
+  data: PublicComponentData[];
+  totalCount: number;
+  totalPages: number;
+}
+
+export function usePublicComponents(filters: { search?: string; page?: number; pageSize?: number } = {}) {
+  return useQuery({
+    queryKey: ["public-components", filters],
+    queryFn: async (): Promise<PublicComponentsResult> => {
+      const { page = 1, pageSize = 12 } = filters;
+      
+      // Only fetch components that need support
+      let countQuery = supabase
+        .from("components")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "needs_support");
+
+      // Apply search filter to count query
+      if (filters.search && filters.search.trim()) {
+        const searchTerm = `%${filters.search.trim()}%`;
+        countQuery = countQuery.or(
+          `component_type.ilike.${searchTerm},brand.ilike.${searchTerm},model.ilike.${searchTerm},specifications.ilike.${searchTerm},notes.ilike.${searchTerm}`
+        );
+      }
+
+      const { count, error: countError } = await countQuery;
+
+      if (countError) {
+        console.error("Error fetching public components count:", countError);
+        throw countError;
+      }
+
+      // Get the actual data with pagination (only public fields)
+      let query = supabase
+        .from("components")
+        .select("id, component_type, brand, model, specifications, condition, notes, purchase_link, delivery_address, delivery_phone, status, received_date, created_at")
+        .eq("status", "needs_support")
+        .order("created_at", { ascending: false });
+
+      // Apply search filter
+      if (filters.search && filters.search.trim()) {
+        const searchTerm = `%${filters.search.trim()}%`;
+        query = query.or(
+          `component_type.ilike.${searchTerm},brand.ilike.${searchTerm},model.ilike.${searchTerm},specifications.ilike.${searchTerm},notes.ilike.${searchTerm}`
+        );
+      }
+
+      // Apply pagination
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      query = query.range(from, to);
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching public components:", error);
+        throw error;
+      }
+
+      const transformedData = (data || []).map((component: any) => ({
+        id: component.id,
+        component_type: component.component_type,
+        brand: component.brand,
+        model: component.model,
+        specifications: component.specifications,
+        condition: component.condition,
+        notes: component.notes,
+        purchase_link: component.purchase_link,
+        delivery_address: component.delivery_address,
+        delivery_phone: component.delivery_phone,
+        status: component.status,
+        received_date: component.received_date,
+        created_at: component.created_at,
+      })) as PublicComponentData[];
+
+      const totalCount = count || 0;
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        data: transformedData,
+        totalCount,
+        totalPages,
+      };
     },
   });
 }
