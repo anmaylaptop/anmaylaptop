@@ -1,4 +1,28 @@
 import { useState } from "react";
+
+// Component for laptop image thumbnail with error handling
+function LaptopImageThumbnail({ imageUrl, alt }: { imageUrl: string; alt: string }) {
+  const [imageError, setImageError] = useState(false);
+
+  if (imageError) {
+    return (
+      <div className="h-12 w-12 flex items-center justify-center rounded-md border border-border bg-muted">
+        <Laptop className="h-6 w-6 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-12 w-12 overflow-hidden rounded-md border border-border">
+      <img
+        src={imageUrl}
+        alt={alt}
+        className="h-full w-full object-cover"
+        onError={() => setImageError(true)}
+      />
+    </div>
+  );
+}
 import { CreateLaptopForm } from "@/components/forms/CreateLaptopForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -28,7 +52,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Laptop, AlertCircle, Upload } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Laptop, AlertCircle, Upload, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLaptops } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
@@ -157,6 +181,7 @@ export default function Laptops() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[80px]">Ảnh</TableHead>
                 <TableHead>Model</TableHead>
                 <TableHead>Hãng</TableHead>
                 <TableHead>Người tặng</TableHead>
@@ -168,8 +193,19 @@ export default function Laptops() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {laptops.map((laptop) => (
+              {laptops.map((laptop) => {
+                const imageUrl = (laptop as any).image_url;
+                return (
                 <TableRow key={laptop.id}>
+                  <TableCell>
+                    {imageUrl ? (
+                      <LaptopImageThumbnail imageUrl={imageUrl} alt={`${laptop.brand} ${laptop.model}`} />
+                    ) : (
+                      <div className="h-12 w-12 flex items-center justify-center rounded-md border border-border bg-muted">
+                        <Laptop className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">{laptop.model || "Chưa cập nhật"}</TableCell>
                   <TableCell>{laptop.brand || "Chưa cập nhật"}</TableCell>
                   <TableCell>{laptop.donor_name || "Không xác định"}</TableCell>
@@ -219,7 +255,8 @@ export default function Laptops() {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </div>
