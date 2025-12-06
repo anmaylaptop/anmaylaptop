@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { Search, GraduationCap, AlertCircle, HandHeart, MapPin, Calendar, BookOpen, Heart } from "lucide-react";
+import { GraduationCap, AlertCircle, HandHeart, MapPin, Calendar, BookOpen, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -28,7 +27,6 @@ import {
 } from "@/components/ui/select";
 
 export default function PublicStudents() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [academicYearFilter, setAcademicYearFilter] = useState<string>("all");
   const [areaFilter, setAreaFilter] = useState<string>("all");
   const [needTypeFilter, setNeedTypeFilter] = useState<string>("all");
@@ -44,7 +42,6 @@ export default function PublicStudents() {
     isLoading,
     error,
   } = usePublicStudents({
-    search: searchTerm,
     academicYear: academicYearFilter,
     areaId: areaFilter,
     needType: needTypeFilter,
@@ -116,20 +113,6 @@ export default function PublicStudents() {
       {/* Filters Section */}
       <section className="container pb-6">
         <div className="mx-auto max-w-4xl space-y-4">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Tìm kiếm theo hoàn cảnh..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                pagination.setPage(1);
-              }}
-              className="w-full pl-9"
-            />
-          </div>
-
           {/* Filter Row */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Select value={academicYearFilter} onValueChange={(value) => {
@@ -222,13 +205,13 @@ export default function PublicStudents() {
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <GraduationCap className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2">
-                {searchTerm || academicYearFilter !== "all" || areaFilter !== "all" || needTypeFilter !== "all"
+                {academicYearFilter !== "all" || areaFilter !== "all" || needTypeFilter !== "all"
                   ? "Không tìm thấy sinh viên nào"
                   : "Chưa có sinh viên nào được phê duyệt"}
               </h3>
               <p className="text-muted-foreground max-w-md">
-                {searchTerm || academicYearFilter !== "all" || areaFilter !== "all" || needTypeFilter !== "all"
-                  ? "Thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc để xem tất cả sinh viên."
+                {academicYearFilter !== "all" || areaFilter !== "all" || needTypeFilter !== "all"
+                  ? "Thử xóa bộ lọc để xem tất cả sinh viên."
                   : "Hiện tại chưa có sinh viên nào được phê duyệt. Vui lòng quay lại sau."}
               </p>
             </div>

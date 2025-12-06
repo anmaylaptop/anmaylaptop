@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +16,7 @@ import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { PublicHeader } from "@/components/layout/PublicHeader";
 import { PublicFooter } from "@/components/layout/PublicFooter";
-import { usePublicLaptops } from "@/hooks/useInventory";
+import { usePublicLaptops, type PublicLaptopData } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -42,7 +48,8 @@ export default function PublicLaptopBank() {
   const conditionColors: Record<string, string> = {
     new: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
     old: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-    needs_repair: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+    needs_repair:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
   };
 
   return (
@@ -52,7 +59,7 @@ export default function PublicLaptopBank() {
         description="Danh sách laptop đang sẵn sàng để tặng cho sinh viên có hoàn cảnh khó khăn. Xem các laptop đã được sửa chữa và sẵn sàng trao tặng."
         keywords="laptop, ngân hàng laptop, laptop tặng sinh viên, laptop cũ, ăn mày laptop"
       />
-      
+
       <PublicHeader />
 
       {/* Hero Section */}
@@ -62,7 +69,8 @@ export default function PublicLaptopBank() {
             Ngân hàng laptop
           </h2>
           <p className="text-lg text-muted-foreground">
-            Danh sách laptop đang sẵn sàng để tặng cho sinh viên có hoàn cảnh khó khăn
+            Danh sách laptop đang sẵn sàng để tặng cho sinh viên có hoàn cảnh
+            khó khăn
           </p>
         </div>
       </section>
@@ -93,13 +101,19 @@ export default function PublicLaptopBank() {
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 <div>
-                  <p className="font-semibold mb-1">Không thể tải dữ liệu laptop.</p>
-                  <p className="text-sm">
-                    {error instanceof Error ? error.message : "Vui lòng thử lại sau hoặc liên hệ quản trị viên."}
+                  <p className="font-semibold mb-1">
+                    Không thể tải dữ liệu laptop.
                   </p>
-                  {process.env.NODE_ENV === 'development' && (
+                  <p className="text-sm">
+                    {error instanceof Error
+                      ? error.message
+                      : "Vui lòng thử lại sau hoặc liên hệ quản trị viên."}
+                  </p>
+                  {process.env.NODE_ENV === "development" && (
                     <details className="mt-2 text-xs">
-                      <summary className="cursor-pointer">Chi tiết lỗi (dev only)</summary>
+                      <summary className="cursor-pointer">
+                        Chi tiết lỗi (dev only)
+                      </summary>
                       <pre className="mt-2 p-2 bg-destructive/10 rounded overflow-auto">
                         {JSON.stringify(error, null, 2)}
                       </pre>
@@ -130,7 +144,9 @@ export default function PublicLaptopBank() {
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Laptop className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2">
-                {searchTerm ? "Không tìm thấy laptop nào" : "Chưa có laptop nào sẵn sàng"}
+                {searchTerm
+                  ? "Không tìm thấy laptop nào"
+                  : "Chưa có laptop nào sẵn sàng"}
               </h3>
               <p className="text-muted-foreground max-w-md">
                 {searchTerm
@@ -145,7 +161,7 @@ export default function PublicLaptopBank() {
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {laptops.map((laptop) => {
-                  const imageUrl = (laptop as any).image_url;
+                  const imageUrl = (laptop as PublicLaptopData).image_url;
                   return (
                     <Card
                       key={laptop.id}
@@ -188,46 +204,54 @@ export default function PublicLaptopBank() {
                         </div>
                       </CardHeader>
                       <CardContent className="flex-1 flex flex-col space-y-3">
-                      {laptop.specifications && (
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">
-                            Thông số kỹ thuật:
-                          </p>
-                          <p className="text-sm line-clamp-3">{laptop.specifications}</p>
-                        </div>
-                      )}
+                        {laptop.specifications && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Thông số kỹ thuật:
+                            </p>
+                            <p className="text-sm line-clamp-3">
+                              {laptop.specifications}
+                            </p>
+                          </div>
+                        )}
 
-                      {laptop.condition && (
-                        <div>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                              conditionColors[laptop.condition] || conditionColors.old
-                            }`}
-                          >
-                            {conditionLabels[laptop.condition] || laptop.condition}
-                          </span>
-                        </div>
-                      )}
+                        {laptop.condition && (
+                          <div>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                conditionColors[laptop.condition] ||
+                                conditionColors.old
+                              }`}
+                            >
+                              {conditionLabels[laptop.condition] ||
+                                laptop.condition}
+                            </span>
+                          </div>
+                        )}
 
-                      {laptop.notes && (
-                        <div>
-                          <p className="text-xs font-medium text-muted-foreground mb-1">
-                            Ghi chú:
-                          </p>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {laptop.notes}
+                        {laptop.notes && (
+                          <div>
+                            <p className="text-xs font-medium text-muted-foreground mb-1">
+                              Ghi chú:
+                            </p>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {laptop.notes}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="pt-2 border-t text-xs text-muted-foreground">
+                          <p>
+                            Ngày nhận:{" "}
+                            {format(
+                              new Date(laptop.received_date),
+                              "dd/MM/yyyy",
+                              { locale: vi }
+                            )}
                           </p>
                         </div>
-                      )}
-
-                      <div className="pt-2 border-t text-xs text-muted-foreground">
-                        <p>
-                          Ngày nhận:{" "}
-                          {format(new Date(laptop.received_date), "dd/MM/yyyy", { locale: vi })}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
                   );
                 })}
               </div>
