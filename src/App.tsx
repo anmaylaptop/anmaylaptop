@@ -10,6 +10,7 @@ import PublicDonorRegistration from "./pages/PublicDonorRegistration";
 import PublicStudentRegistration from "./pages/PublicStudentRegistration";
 import PublicLaptopBank from "./pages/PublicLaptopBank";
 import PublicComponentBank from "./pages/PublicComponentBank";
+import PublicStudents from "./pages/PublicStudents";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Applications from "./pages/Applications";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/dang-ky-sinh-vien" element={<PublicStudentRegistration />} />
             <Route path="/ngan-hang-laptop" element={<PublicLaptopBank />} />
             <Route path="/ngan-hang-linh-kien" element={<PublicComponentBank />} />
+            <Route path="/danh-sach-sinh-vien" element={<PublicStudents />} />
             <Route path="/auth" element={<Auth />} />
 
             {/* Admin Routes - Authentication required */}

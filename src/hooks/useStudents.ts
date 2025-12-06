@@ -391,3 +391,197 @@ export function useDeleteStudent() {
     },
   });
 }
+
+// ============================================
+// PUBLIC STUDENTS (for public page)
+// ============================================
+
+export interface PublicStudentData {
+  id: string;
+  birth_year: number;
+  academic_year: string;
+  area_id: string | null;
+  area_name: string | null;
+  difficult_situation: string;
+  need_laptop: boolean;
+  need_motorbike: boolean;
+  need_tuition: boolean;
+  need_components: boolean;
+  components_details: string | null;
+  laptop_received: boolean;
+  motorbike_received: boolean;
+  tuition_supported: boolean;
+  components_received: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface PublicStudentsResult {
+  data: PublicStudentData[];
+  totalCount: number;
+  totalPages: number;
+}
+
+export function usePublicStudents(filters: { 
+  search?: string; 
+  academicYear?: string;
+  areaId?: string;
+  needType?: string;
+  page?: number; 
+  pageSize?: number;
+} = {}) {
+  return useQuery({
+    queryKey: ["public-students", filters],
+    queryFn: async (): Promise<PublicStudentsResult> => {
+      const { page = 1, pageSize = 12 } = filters;
+      
+      // Only fetch public fields (excluding full_name, phone, address, facebook_link, notes)
+      // Use a specific column for count to avoid RLS issues
+      let countQuery = supabase
+        .from("students")
+        .select("id", { count: "exact", head: true });
+
+      // Apply search filter to count query (search in difficult_situation)
+      if (filters.search && filters.search.trim()) {
+        const searchTerm = `%${filters.search.trim()}%`;
+        countQuery = countQuery.ilike("difficult_situation", searchTerm);
+      }
+
+      // Apply academic year filter
+      if (filters.academicYear && filters.academicYear !== "all") {
+        countQuery = countQuery.eq("academic_year", filters.academicYear);
+      }
+
+      // Apply area filter
+      if (filters.areaId && filters.areaId !== "all") {
+        countQuery = countQuery.eq("area_id", filters.areaId);
+      }
+
+      // Apply need type filter
+      if (filters.needType && filters.needType !== "all") {
+        switch (filters.needType) {
+          case "laptop":
+            countQuery = countQuery.eq("need_laptop", true).eq("laptop_received", false);
+            break;
+          case "motorbike":
+            countQuery = countQuery.eq("need_motorbike", true).eq("motorbike_received", false);
+            break;
+          case "tuition":
+            countQuery = countQuery.eq("need_tuition", true).eq("tuition_supported", false);
+            break;
+          case "components":
+            countQuery = countQuery.eq("need_components", true).eq("components_received", false);
+            break;
+        }
+      }
+
+      const { count, error: countError } = await countQuery;
+
+      if (countError) {
+        console.error("Error fetching public students count:", countError);
+        throw countError;
+      }
+
+      // Get the actual data with pagination (only public fields)
+      // Join with areas table to get area name
+      let query = supabase
+        .from("students")
+        .select(`
+          id,
+          birth_year,
+          academic_year,
+          area_id,
+          areas(name),
+          difficult_situation,
+          need_laptop,
+          need_motorbike,
+          need_tuition,
+          need_components,
+          components_details,
+          laptop_received,
+          motorbike_received,
+          tuition_supported,
+          components_received,
+          created_at,
+          updated_at
+        `)
+        .order("created_at", { ascending: false });
+
+      // Apply search filter
+      if (filters.search && filters.search.trim()) {
+        const searchTerm = `%${filters.search.trim()}%`;
+        query = query.ilike("difficult_situation", searchTerm);
+      }
+
+      // Apply academic year filter
+      if (filters.academicYear && filters.academicYear !== "all") {
+        query = query.eq("academic_year", filters.academicYear);
+      }
+
+      // Apply area filter
+      if (filters.areaId && filters.areaId !== "all") {
+        query = query.eq("area_id", filters.areaId);
+      }
+
+      // Apply need type filter
+      if (filters.needType && filters.needType !== "all") {
+        switch (filters.needType) {
+          case "laptop":
+            query = query.eq("need_laptop", true).eq("laptop_received", false);
+            break;
+          case "motorbike":
+            query = query.eq("need_motorbike", true).eq("motorbike_received", false);
+            break;
+          case "tuition":
+            query = query.eq("need_tuition", true).eq("tuition_supported", false);
+            break;
+          case "components":
+            query = query.eq("need_components", true).eq("components_received", false);
+            break;
+        }
+      }
+
+      // Apply pagination
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+      query = query.range(from, to);
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching public students:", error);
+        throw error;
+      }
+
+      // Transform data to flatten the areas relationship
+      const transformedData = (data || []).map((student: any) => ({
+        id: student.id,
+        birth_year: student.birth_year,
+        academic_year: student.academic_year,
+        area_id: student.area_id,
+        area_name: student.areas?.name || null,
+        difficult_situation: student.difficult_situation,
+        need_laptop: student.need_laptop,
+        need_motorbike: student.need_motorbike,
+        need_tuition: student.need_tuition,
+        need_components: student.need_components,
+        components_details: student.components_details,
+        laptop_received: student.laptop_received,
+        motorbike_received: student.motorbike_received,
+        tuition_supported: student.tuition_supported,
+        components_received: student.components_received,
+        created_at: student.created_at,
+        updated_at: student.updated_at,
+      })) as PublicStudentData[];
+
+      const totalCount = count || 0;
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        data: transformedData,
+        totalCount,
+        totalPages,
+      };
+    },
+  });
+}
