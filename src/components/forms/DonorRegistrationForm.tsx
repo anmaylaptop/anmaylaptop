@@ -26,14 +26,7 @@ import {
   supportTypeLabels,
   getAllSupportTypes
 } from "@/enums";
-import { useAreas } from "@/hooks/useAreas";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ContactInfoFields } from "./ContactInfoFields";
 
 const formSchema = z.object({
   full_name: z.string().min(2, "Họ và tên phải có ít nhất 2 ký tự"),
@@ -111,8 +104,6 @@ const supportTypeOptions = getAllSupportTypes().map((type) => ({
 
 export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistrationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: areasResult, isLoading: isLoadingAreas } = useAreas({ isActive: true });
-  const areas = areasResult?.data ?? [];
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -182,107 +173,10 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
       <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Basic Information */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Thông tin liên hệ</h3>
-
-              <FormField
-                control={form.control}
-                name="full_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Họ và tên *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Nguyễn Văn A" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Số điện thoại *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Cần thiết để liên lạc" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Địa chỉ liên lạc *</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="123 Đường ABC, Quận 1, TP.HCM" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="facebook_link"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Link Facebook</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://facebook.com/username" {...field} />
-                    </FormControl>
-                    <FormDescription>Tùy chọn, nhưng nên cung cấp để dễ liên lạc và cập nhật thông tin trên Facebook</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="area_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Khu vực *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || undefined}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn khu vực..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {isLoadingAreas ? (
-                          <SelectItem value="loading" disabled>
-                            Đang tải...
-                          </SelectItem>
-                        ) : areas.length === 0 ? (
-                          <SelectItem value="empty" disabled>
-                            Không có khu vực nào
-                          </SelectItem>
-                        ) : (
-                          areas.map((area) => (
-                            <SelectItem key={area.id} value={area.id}>
-                              {area.name}
-                            </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Chọn khu vực của bạn để dễ dàng kết nối với sinh viên cùng địa bàn
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <ContactInfoFields
+              control={form.control}
+              areaDescription="Chọn khu vực của bạn để dễ dàng kết nối với sinh viên cùng địa bàn"
+            />
 
             {/* Support Information */}
             <div className="space-y-4">

@@ -41,6 +41,571 @@ export type Database = {
         }
         Relationships: []
       }
+      donor_applications: {
+        Row: {
+          id: string
+          full_name: string
+          phone: string
+          address: string
+          facebook_link: string | null
+          area_id: string | null
+          support_types: string[]
+          support_details: string | null
+          laptop_quantity: number | null
+          motorbike_quantity: number | null
+          components_quantity: number | null
+          tuition_amount: number | null
+          tuition_frequency: string | null
+          status: string
+          rejection_reason: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          id?: string
+          full_name: string
+          phone: string
+          address: string
+          facebook_link?: string | null
+          area_id?: string | null
+          support_types: string[]
+          support_details?: string | null
+          laptop_quantity?: number | null
+          motorbike_quantity?: number | null
+          components_quantity?: number | null
+          tuition_amount?: number | null
+          tuition_frequency?: string | null
+          status?: string
+          rejection_reason?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          id?: string
+          full_name?: string
+          phone?: string
+          address?: string
+          facebook_link?: string | null
+          area_id?: string | null
+          support_types?: string[]
+          support_details?: string | null
+          laptop_quantity?: number | null
+          motorbike_quantity?: number | null
+          components_quantity?: number | null
+          tuition_amount?: number | null
+          tuition_frequency?: string | null
+          status?: string
+          rejection_reason?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donor_applications_area_id_fkey"
+            columns: ["area_id"]
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      student_applications: {
+        Row: {
+          id: string
+          full_name: string
+          birth_year: number
+          phone: string
+          address: string
+          facebook_link: string | null
+          area_id: string | null
+          academic_year: string
+          difficult_situation: string
+          need_laptop: boolean
+          need_motorbike: boolean
+          need_tuition: boolean
+          need_components: boolean
+          components_details: string | null
+          status: string
+          rejection_reason: string | null
+          verification_notes: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          id?: string
+          full_name: string
+          birth_year: number
+          phone: string
+          address: string
+          facebook_link?: string | null
+          area_id?: string | null
+          academic_year: string
+          difficult_situation: string
+          need_laptop?: boolean
+          need_motorbike?: boolean
+          need_tuition?: boolean
+          need_components?: boolean
+          components_details?: string | null
+          status?: string
+          rejection_reason?: string | null
+          verification_notes?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          id?: string
+          full_name?: string
+          birth_year?: number
+          phone?: string
+          address?: string
+          facebook_link?: string | null
+          area_id?: string | null
+          academic_year?: string
+          difficult_situation?: string
+          need_laptop?: boolean
+          need_motorbike?: boolean
+          need_tuition?: boolean
+          need_components?: boolean
+          components_details?: string | null
+          status?: string
+          rejection_reason?: string | null
+          verification_notes?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_applications_area_id_fkey"
+            columns: ["area_id"]
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      areas: {
+        Row: {
+          id: string
+          name: string
+          description: string | null
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          description?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          description?: string | null
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donors: {
+        Row: {
+          id: string
+          application_id: string | null
+          full_name: string
+          phone: string
+          address: string
+          facebook_link: string | null
+          area_id: string | null
+          support_types: string[]
+          support_frequency: string
+          support_details: string | null
+          laptop_quantity: number | null
+          motorbike_quantity: number | null
+          components_quantity: number | null
+          tuition_amount: number | null
+          tuition_frequency: string | null
+          support_end_date: string | null
+          is_active: boolean
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          application_id?: string | null
+          full_name: string
+          phone: string
+          address: string
+          facebook_link?: string | null
+          area_id?: string | null
+          support_types: string[]
+          support_frequency: string
+          support_details?: string | null
+          laptop_quantity?: number | null
+          motorbike_quantity?: number | null
+          components_quantity?: number | null
+          tuition_amount?: number | null
+          tuition_frequency?: string | null
+          support_end_date?: string | null
+          is_active?: boolean
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          application_id?: string | null
+          full_name?: string
+          phone?: string
+          address?: string
+          facebook_link?: string | null
+          area_id?: string | null
+          support_types?: string[]
+          support_frequency?: string
+          support_details?: string | null
+          laptop_quantity?: number | null
+          motorbike_quantity?: number | null
+          components_quantity?: number | null
+          tuition_amount?: number | null
+          tuition_frequency?: string | null
+          support_end_date?: string | null
+          is_active?: boolean
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donors_area_id_fkey"
+            columns: ["area_id"]
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      students: {
+        Row: {
+          id: string
+          application_id: string | null
+          full_name: string
+          birth_year: number
+          phone: string
+          address: string
+          facebook_link: string | null
+          area_id: string | null
+          academic_year: string
+          difficult_situation: string
+          need_laptop: boolean
+          laptop_received: boolean
+          laptop_received_date: string | null
+          need_motorbike: boolean
+          motorbike_received: boolean
+          motorbike_received_date: string | null
+          need_tuition: boolean
+          tuition_supported: boolean
+          tuition_support_start_date: string | null
+          need_components: boolean
+          components_details: string | null
+          components_received: boolean
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          application_id?: string | null
+          full_name: string
+          birth_year: number
+          phone: string
+          address: string
+          facebook_link?: string | null
+          area_id?: string | null
+          academic_year: string
+          difficult_situation: string
+          need_laptop?: boolean
+          laptop_received?: boolean
+          laptop_received_date?: string | null
+          need_motorbike?: boolean
+          motorbike_received?: boolean
+          motorbike_received_date?: string | null
+          need_tuition?: boolean
+          tuition_supported?: boolean
+          tuition_support_start_date?: string | null
+          need_components?: boolean
+          components_details?: string | null
+          components_received?: boolean
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          application_id?: string | null
+          full_name?: string
+          birth_year?: number
+          phone?: string
+          address?: string
+          facebook_link?: string | null
+          area_id?: string | null
+          academic_year?: string
+          difficult_situation?: string
+          need_laptop?: boolean
+          laptop_received?: boolean
+          laptop_received_date?: string | null
+          need_motorbike?: boolean
+          motorbike_received?: boolean
+          motorbike_received_date?: string | null
+          need_tuition?: boolean
+          tuition_supported?: boolean
+          tuition_support_start_date?: string | null
+          need_components?: boolean
+          components_details?: string | null
+          components_received?: boolean
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_area_id_fkey"
+            columns: ["area_id"]
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      laptops: {
+        Row: {
+          id: string
+          donor_id: string | null
+          student_id: string | null
+          brand: string | null
+          model: string | null
+          specifications: string | null
+          condition: string | null
+          notes: string | null
+          status: string
+          received_date: string
+          assigned_date: string | null
+          delivered_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          brand?: string | null
+          model?: string | null
+          specifications?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          brand?: string | null
+          model?: string | null
+          specifications?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      motorbikes: {
+        Row: {
+          id: string
+          donor_id: string | null
+          student_id: string | null
+          brand: string | null
+          model: string | null
+          year: number | null
+          license_plate: string | null
+          condition: string | null
+          notes: string | null
+          status: string
+          received_date: string
+          assigned_date: string | null
+          delivered_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          brand?: string | null
+          model?: string | null
+          year?: number | null
+          license_plate?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          brand?: string | null
+          model?: string | null
+          year?: number | null
+          license_plate?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      components: {
+        Row: {
+          id: string
+          donor_id: string | null
+          student_id: string | null
+          component_type: string
+          brand: string | null
+          model: string | null
+          specifications: string | null
+          condition: string | null
+          notes: string | null
+          status: string
+          received_date: string
+          assigned_date: string | null
+          delivered_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          component_type: string
+          brand?: string | null
+          model?: string | null
+          specifications?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          component_type?: string
+          brand?: string | null
+          model?: string | null
+          specifications?: string | null
+          condition?: string | null
+          notes?: string | null
+          status?: string
+          received_date?: string
+          assigned_date?: string | null
+          delivered_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tuition_support: {
+        Row: {
+          id: string
+          donor_id: string | null
+          student_id: string | null
+          amount: number
+          frequency: string
+          academic_year: string | null
+          semester: number | null
+          notes: string | null
+          status: string
+          pledged_date: string
+          paid_date: string | null
+          start_date: string | null
+          end_date: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          amount: number
+          frequency: string
+          academic_year?: string | null
+          semester?: number | null
+          notes?: string | null
+          status?: string
+          pledged_date?: string
+          paid_date?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          donor_id?: string | null
+          student_id?: string | null
+          amount?: number
+          frequency?: string
+          academic_year?: string | null
+          semester?: number | null
+          notes?: string | null
+          status?: string
+          pledged_date?: string
+          paid_date?: string | null
+          start_date?: string | null
+          end_date?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -49,7 +614,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      application_status: "pending" | "approved" | "rejected"
+      support_type: "laptop" | "motorbike" | "components" | "tuition"
+      support_frequency: "one_time" | "recurring"
+      academic_year: "1" | "2" | "3" | "4"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -176,6 +744,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      application_status: ["pending", "approved", "rejected"],
+      support_type: ["laptop", "motorbike", "components", "tuition"],
+      support_frequency: ["one_time", "recurring"],
+      academic_year: ["1", "2", "3", "4"],
+    },
   },
 } as const
