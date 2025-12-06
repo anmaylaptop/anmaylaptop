@@ -5,6 +5,7 @@ import { Loader2, Upload, X, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { resizeAndConvertToWebP } from "@/lib/image-utils";
 
 interface ImageUploadProps {
   value?: string | null;
@@ -21,7 +22,7 @@ export function ImageUpload({
   onChange,
   bucket = "laptop-images",
   folder = "laptops",
-  maxSizeMB = 5,
+  maxSizeMB = 0.75, // 768KB = 0.75MB
   className,
   disabled = false,
 }: ImageUploadProps) {
@@ -39,30 +40,46 @@ export function ImageUpload({
       return;
     }
 
-    // Validate file size
-    const fileSizeMB = file.size / (1024 * 1024);
-    if (fileSizeMB > maxSizeMB) {
-      toast.error(`Kích thước file không được vượt quá ${maxSizeMB}MB`);
+    // Initial file size check (before processing)
+    const initialSizeMB = file.size / (1024 * 1024);
+    if (initialSizeMB > 10) {
+      toast.error("File ảnh quá lớn. Vui lòng chọn ảnh nhỏ hơn 10MB");
       return;
     }
 
-    // Show preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    setUploading(true);
+    try {
+      // Resize and convert to WebP (720p, max 768KB)
+      toast.info("Đang xử lý ảnh...", { duration: 2000 });
+      const processedFile = await resizeAndConvertToWebP(file, {
+        maxWidth: 1280,
+        maxHeight: 720,
+        quality: 0.85,
+        maxSizeKB: 768,
+      });
 
-    // Upload to Supabase Storage
-    await uploadImage(file);
+      // Show preview of processed image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(processedFile);
+
+      // Upload processed image
+      await uploadImage(processedFile);
+    } catch (error: any) {
+      console.error("Error processing image:", error);
+      toast.error(error.message || "Có lỗi xảy ra khi xử lý ảnh");
+      setPreview(null);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const uploadImage = async (file: File) => {
-    setUploading(true);
     try {
-      // Generate unique filename
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      // Generate unique filename (always .webp since we convert to WebP)
+      const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2)}.webp`;
 
       // Upload file
       const { error: uploadError } = await supabase.storage
@@ -82,7 +99,8 @@ export function ImageUpload({
 
       if (data?.publicUrl) {
         onChange(data.publicUrl);
-        toast.success("Upload ảnh thành công");
+        const finalSizeKB = (file.size / 1024).toFixed(1);
+        toast.success(`Upload ảnh thành công (${finalSizeKB}KB)`);
       } else {
         throw new Error("Không thể lấy URL công khai của ảnh");
       }
@@ -90,8 +108,8 @@ export function ImageUpload({
       console.error("Error uploading image:", error);
       toast.error(error.message || "Có lỗi xảy ra khi upload ảnh");
       setPreview(null);
+      throw error; // Re-throw to be caught by handleFileSelect
     } finally {
-      setUploading(false);
       // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -158,7 +176,7 @@ export function ImageUpload({
             {uploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Đang upload...
+                Đang xử lý...
               </>
             ) : (
               <>
@@ -168,7 +186,7 @@ export function ImageUpload({
             )}
           </Button>
           <p className="text-xs text-muted-foreground mt-1">
-            JPG, PNG tối đa {maxSizeMB}MB
+            JPG, PNG (tự động resize 720p, WebP, tối đa 768KB)
           </p>
         </div>
       </div>
