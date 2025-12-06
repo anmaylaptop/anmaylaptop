@@ -9,6 +9,7 @@ import { Search, Laptop, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 import { usePublicLaptops } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
 import { format } from "date-fns";
@@ -249,23 +250,7 @@ export default function PublicLaptopBank() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8 bg-muted/50 mt-12">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2024 Dự án "Ăn mày laptop" - Kết nối yêu thương, lan tỏa hy vọng</p>
-          <div className="mt-4 flex justify-center gap-4">
-            <Link to="/" className="hover:text-primary transition-colors">
-              Trang chủ
-            </Link>
-            <Link to="/dang-ky-nha-hao-tam" className="hover:text-primary transition-colors">
-              Đăng ký nhà hảo tâm
-            </Link>
-            <Link to="/dang-ky-sinh-vien" className="hover:text-primary transition-colors">
-              Đăng ký sinh viên
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

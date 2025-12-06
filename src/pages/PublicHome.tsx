@@ -4,6 +4,7 @@ import { Heart, Laptop, GraduationCap, ArrowRight, Wrench, Users } from "lucide-
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { PublicHeader } from "@/components/layout/PublicHeader";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 
 export default function PublicHome() {
   return (
@@ -468,12 +469,7 @@ export default function PublicHome() {
                                                     </div>
                                                     </section>
 
-  {/* Footer */ }
-  <footer className="border-t py-8 bg-muted/50" >
-    <div className="container text-center text-sm text-muted-foreground" >
-      <p>© 2024 Dự án "Ăn mày laptop" - Kết nối yêu thương, lan tỏa hy vọng </p>
-        </div>
-        </footer>
+      <PublicFooter />
         </div>
   );
 }

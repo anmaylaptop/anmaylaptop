@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Laptop, ArrowLeft } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { PublicFooter } from "@/components/layout/PublicFooter";
 
 interface PublicRegistrationLayoutProps {
   title: string;
@@ -51,12 +52,7 @@ export function PublicRegistrationLayout({
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t py-8 bg-muted/50 mt-12">
-        <div className="container text-center text-sm text-muted-foreground">
-          <p>© 2024 Dự án "Ăn mày laptop" - Kết nối yêu thương, lan tỏa hy vọng</p>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }
