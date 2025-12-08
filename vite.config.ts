@@ -15,4 +15,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  ssr: {
+    // Bundle CJS-only packages so SSR imports work correctly
+    noExternal: ["react-helmet-async"],
+  },
 }));

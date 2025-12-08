@@ -5,12 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import PublicHome from "./pages/PublicHome";
-import PublicDonorRegistration from "./pages/PublicDonorRegistration";
-import PublicStudentRegistration from "./pages/PublicStudentRegistration";
-import PublicLaptopBank from "./pages/PublicLaptopBank";
-import PublicComponentBank from "./pages/PublicComponentBank";
-import PublicStudents from "./pages/PublicStudents";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Applications from "./pages/Applications";
@@ -24,8 +18,24 @@ import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Areas from "./pages/Areas";
 import NotFound from "./pages/NotFound";
+import PublicComponentBank from "./pages/PublicComponentBank";
+import PublicDonorRegistration from "./pages/PublicDonorRegistration";
+import PublicHome from "./pages/PublicHome";
+import PublicLaptopBank from "./pages/PublicLaptopBank";
+import PublicStudentRegistration from "./pages/PublicStudentRegistration";
+import PublicStudents from "./pages/PublicStudents";
 
 const queryClient = new QueryClient();
+
+const publicRoutes = [
+  { path: "/", element: <PublicHome /> },
+  { path: "/dang-ky-nha-hao-tam", element: <PublicDonorRegistration /> },
+  { path: "/dang-ky-sinh-vien", element: <PublicStudentRegistration /> },
+  { path: "/ngan-hang-laptop", element: <PublicLaptopBank /> },
+  { path: "/ngan-hang-linh-kien", element: <PublicComponentBank /> },
+  { path: "/danh-sach-sinh-vien", element: <PublicStudents /> },
+  { path: "/auth", element: <Auth /> },
+];
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -36,13 +46,9 @@ const App = () => (
         <AuthProvider>
           <Routes>
             {/* Public Routes - No authentication required */}
-            <Route path="/" element={<PublicHome />} />
-            <Route path="/dang-ky-nha-hao-tam" element={<PublicDonorRegistration />} />
-            <Route path="/dang-ky-sinh-vien" element={<PublicStudentRegistration />} />
-            <Route path="/ngan-hang-laptop" element={<PublicLaptopBank />} />
-            <Route path="/ngan-hang-linh-kien" element={<PublicComponentBank />} />
-            <Route path="/danh-sach-sinh-vien" element={<PublicStudents />} />
-            <Route path="/auth" element={<Auth />} />
+            {publicRoutes.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))}
 
             {/* Admin Routes - Authentication required */}
             <Route
