@@ -1,8 +1,11 @@
+import type { ReactNode } from "react";
+import type { RouteRecord } from "vite-react-ssg";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Outlet, useRoutes } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
@@ -27,7 +30,25 @@ import PublicStudents from "./pages/PublicStudents";
 
 const queryClient = new QueryClient();
 
-const publicRoutes = [
+const AppProviders = ({ children }: { children: ReactNode }) => (
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <AuthProvider>{children}</AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
+);
+
+const RootLayout = () => (
+  <AppProviders>
+    <Outlet />
+  </AppProviders>
+);
+
+export const publicRoutes: RouteRecord[] = [
   { path: "/", element: <PublicHome /> },
   { path: "/dang-ky-nha-hao-tam", element: <PublicDonorRegistration /> },
   { path: "/dang-ky-sinh-vien", element: <PublicStudentRegistration /> },
@@ -37,114 +58,123 @@ const publicRoutes = [
   { path: "/auth", element: <Auth /> },
 ];
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public Routes - No authentication required */}
-            {publicRoutes.map(({ path, element }) => (
-              <Route key={path} path={path} element={element} />
-            ))}
+const protectedRoutes: RouteRecord[] = [
+  {
+    path: "/admin",
+    element: (
+      <ProtectedRoute>
+        <Index />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/don-dang-ky",
+    element: (
+      <ProtectedRoute>
+        <Applications />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/nha-hao-tam",
+    element: (
+      <ProtectedRoute>
+        <Donors />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/sinh-vien",
+    element: (
+      <ProtectedRoute>
+        <Students />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/laptop",
+    element: (
+      <ProtectedRoute>
+        <Laptops />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/xe-may",
+    element: (
+      <ProtectedRoute>
+        <Motorbikes />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/linh-kien",
+    element: (
+      <ProtectedRoute>
+        <Components />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/hoc-phi",
+    element: (
+      <ProtectedRoute>
+        <Tuition />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/bao-cao",
+    element: (
+      <ProtectedRoute>
+        <Reports />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/khu-vuc",
+    element: (
+      <ProtectedRoute>
+        <Areas />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/cai-dat",
+    element: (
+      <ProtectedRoute>
+        <Settings />
+      </ProtectedRoute>
+    ),
+  },
+];
 
-            {/* Admin Routes - Authentication required */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/don-dang-ky"
-              element={
-                <ProtectedRoute>
-                  <Applications />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/nha-hao-tam"
-              element={
-                <ProtectedRoute>
-                  <Donors />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/sinh-vien"
-              element={
-                <ProtectedRoute>
-                  <Students />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/laptop"
-              element={
-                <ProtectedRoute>
-                  <Laptops />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/xe-may"
-              element={
-                <ProtectedRoute>
-                  <Motorbikes />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/linh-kien"
-              element={
-                <ProtectedRoute>
-                  <Components />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/hoc-phi"
-              element={
-                <ProtectedRoute>
-                  <Tuition />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/bao-cao"
-              element={
-                <ProtectedRoute>
-                  <Reports />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/khu-vuc"
-              element={
-                <ProtectedRoute>
-                  <Areas />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/cai-dat"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+export const ssgRoutes: RouteRecord[] = [
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [...publicRoutes, { path: "*", element: <NotFound /> }],
+  },
+];
+
+export const routes: RouteRecord[] = [
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      ...publicRoutes,
+      ...protectedRoutes,
+      { path: "*", element: <NotFound /> },
+    ],
+  },
+];
+
+const AppRoutes = () => useRoutes(routes);
+
+const App = () => (
+  <BrowserRouter>
+    <AppRoutes />
+  </BrowserRouter>
 );
 
 export default App;
