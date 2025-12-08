@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc></loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>/dang-ky-nha-hao-tam</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/dang-ky-nha-hao-tam</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/dang-ky-sinh-vien</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/dang-ky-sinh-vien</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/ngan-hang-laptop</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/ngan-hang-laptop</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/ngan-hang-linh-kien</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/ngan-hang-linh-kien</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/danh-sach-sinh-vien</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/danh-sach-sinh-vien</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/auth</loc>
+    <loc>https://anmaylaptop.thanhtunguet.io.vn/auth</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
