@@ -38,18 +38,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Heart, AlertCircle, Power } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Heart, AlertCircle, Power, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DonorDetailDialog } from "@/components/donors/DonorDetailDialog";
+import { CreateDonorDialog } from "@/components/dialogs/CreateDonorDialog";
 import { useDonors, useToggleDonorActive, useDeleteDonor } from "@/hooks/useDonors";
 import { usePagination } from "@/hooks/usePagination";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { 
-  SupportType, 
+import {
+  SupportType,
   SupportFrequency,
   supportTypeLabels,
-  supportFrequencyLabels 
+  supportFrequencyLabels
 } from "@/enums";
 
 export default function Donors() {
@@ -61,6 +62,7 @@ export default function Donors() {
   const [selectedDonorId, setSelectedDonorId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [donorToDelete, setDonorToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -195,6 +197,10 @@ export default function Donors() {
             </SelectContent>
           </Select>
         </div>
+        <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Thêm nhà hảo tâm
+        </Button>
       </div>
 
       {error && (
@@ -312,6 +318,12 @@ export default function Donors() {
         donor={selectedDonor}
         onToggleActive={handleToggleActive}
         isLoading={toggleActiveMutation.isPending}
+      />
+
+      {/* Create Donor Dialog */}
+      <CreateDonorDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
       />
 
       {/* Delete Confirmation Dialog */}

@@ -38,19 +38,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, MoreHorizontal, Eye, Edit, Trash2, GraduationCap, AlertCircle, CheckCircle, Check } from "lucide-react";
+import { Search, MoreHorizontal, Eye, Edit, Trash2, GraduationCap, AlertCircle, CheckCircle, Check, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StudentDetailDialog } from "@/components/students/StudentDetailDialog";
 import { MarkSupportDialog } from "@/components/students/MarkSupportDialog";
+import { CreateStudentDialog } from "@/components/dialogs/CreateStudentDialog";
 import { useStudents, useMarkReceived, useDeleteStudent } from "@/hooks/useStudents";
 import { usePagination } from "@/hooks/usePagination";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { 
-  AcademicYear, 
+import {
+  AcademicYear,
   SupportType,
   academicYearLabels,
-  supportTypeLabels 
+  supportTypeLabels
 } from "@/enums";
 import { getStudentCode } from "@/lib/utils";
 
@@ -64,6 +65,7 @@ export default function Students() {
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -253,6 +255,10 @@ export default function Students() {
             </SelectContent>
           </Select>
         </div>
+        <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Thêm sinh viên
+        </Button>
       </div>
 
       {error && (
@@ -379,6 +385,12 @@ export default function Students() {
         student={selectedStudent}
         onMarkReceived={handleMarkReceived}
         isLoading={markReceivedMutation.isPending}
+      />
+
+      {/* Create Student Dialog */}
+      <CreateStudentDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
       />
 
       {/* Delete Confirmation Dialog */}
