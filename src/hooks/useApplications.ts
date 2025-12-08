@@ -14,6 +14,7 @@ export interface DonorApplicationData {
   laptop_quantity: number | null;
   laptop_images: string[] | null;
   motorbike_quantity: number | null;
+  motorbike_images: string[] | null;
   components_quantity: number | null;
   tuition_amount: number | null;
   tuition_frequency: string | null;

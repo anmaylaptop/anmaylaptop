@@ -44,6 +44,7 @@ const formSchema = z.object({
   laptop_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
   laptop_images: z.array(z.string().url()).optional(),
   motorbike_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
+  motorbike_images: z.array(z.string().url()).optional(),
   components_quantity: z.coerce.number().min(1, "Số lượng phải ít nhất 1").optional(),
   tuition_amount: z.coerce.number().min(100000, "Số tiền phải ít nhất 100,000 VNĐ").optional(),
   tuition_frequency: z.nativeEnum(SupportFrequency).optional(),
@@ -124,6 +125,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
       laptop_quantity: 1,
       laptop_images: [],
       motorbike_quantity: 1,
+      motorbike_images: [],
       components_quantity: 1,
       tuition_amount: undefined,
       tuition_frequency: SupportFrequency.ONE_TIME,
@@ -158,6 +160,7 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
         laptop_quantity: values.laptop_quantity || null,
         laptop_images: values.laptop_images && values.laptop_images.length > 0 ? values.laptop_images : null,
         motorbike_quantity: values.motorbike_quantity || null,
+        motorbike_images: values.motorbike_images && values.motorbike_images.length > 0 ? values.motorbike_images : null,
         components_quantity: values.components_quantity || null,
         tuition_amount: values.tuition_amount || null,
         tuition_frequency: values.tuition_frequency || null,
@@ -285,20 +288,45 @@ export function DonorRegistrationForm({ onSuccess, onCancel }: DonorRegistration
               )}
 
               {selectedSupportTypes.includes(SupportType.MOTORBIKE) && (
-                <FormField
-                  control={form.control}
-                  name="motorbike_quantity"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Số lượng xe máy *</FormLabel>
-                      <FormControl>
-                        <Input type="number" min="1" placeholder="Số lượng xe máy có thể hỗ trợ" {...field} />
-                      </FormControl>
-                      <FormDescription>Số lượng xe máy bạn có thể hỗ trợ</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
+                  <FormField
+                    control={form.control}
+                    name="motorbike_quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Số lượng xe máy *</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="1" placeholder="Số lượng xe máy có thể hỗ trợ" {...field} />
+                        </FormControl>
+                        <FormDescription>Số lượng xe máy bạn có thể hỗ trợ</FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="motorbike_images"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ảnh xe máy (tùy chọn)</FormLabel>
+                        <FormControl>
+                          <ImageUploadMultiple
+                            value={field.value || []}
+                            onChange={field.onChange}
+                            bucket="laptop-images"
+                            folder="donor-applications"
+                            maxImages={5}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Upload ảnh xe máy để giúp chúng tôi đánh giá tình trạng và phù hợp với nhu cầu
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               )}
 
               {selectedSupportTypes.includes(SupportType.COMPONENTS) && (
