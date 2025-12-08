@@ -32,6 +32,7 @@ import { Loader2 } from "lucide-react";
 import { useCreateMotorbike } from "@/hooks/useInventory";
 import { useCreateDonor } from "@/hooks/useDonors";
 import { DonorSelector } from "./DonorSelector";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 const formSchema = z
   .object({
@@ -49,6 +50,7 @@ const formSchema = z
     license_plate: z.string().optional(),
     condition: z.string().optional(),
     notes: z.string().optional(),
+    image_url: z.string().nullable().optional(),
     status: z.enum(["available", "assigned", "delivered", "needs_repair"]),
     received_date: z.string().min(1, "Vui lòng chọn ngày nhận"),
   })
@@ -108,6 +110,7 @@ export function CreateMotorbikeForm({
       license_plate: "",
       condition: "",
       notes: "",
+      image_url: null,
       status: "available",
       received_date: new Date().toISOString().split("T")[0],
     },
@@ -153,6 +156,7 @@ export function CreateMotorbikeForm({
         license_plate: values.license_plate || null,
         condition: values.condition || null,
         notes: values.notes || null,
+        image_url: values.image_url || null,
         status: values.status,
         received_date: values.received_date,
         assigned_date: null,
@@ -262,6 +266,25 @@ export function CreateMotorbikeForm({
                       <Input
                         placeholder="Mới, đã qua sử dụng, cần sửa chữa..."
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="image_url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ảnh xe máy</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        bucket="laptop-images"
+                        folder="motorbikes"
                       />
                     </FormControl>
                     <FormMessage />

@@ -387,6 +387,7 @@ export interface MotorbikeData {
   license_plate: string | null;
   condition: string | null;
   notes: string | null;
+  image_url: string | null;
   status: string;
   received_date: string;
   assigned_date: string | null;

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CreateMotorbikeForm } from "@/components/forms/CreateMotorbikeForm";
+import { EditMotorbikeForm } from "@/components/forms/EditMotorbikeForm";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Bike, AlertCircle } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Bike, AlertCircle, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMotorbikes } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
@@ -49,10 +50,30 @@ const statusColors: Record<string, "approved" | "pending" | "rejected"> = {
   needs_repair: "rejected",
 };
 
+// Motorbike image thumbnail component
+function MotorbikeImageThumbnail({ imageUrl, brand, model }: { imageUrl: string | null; brand: string | null; model: string | null }) {
+  const [imageError, setImageError] = useState(false);
+
+  if (!imageUrl || imageError) {
+    return <Bike className="h-8 w-8 text-muted-foreground" />;
+  }
+
+  return (
+    <img
+      src={imageUrl}
+      alt={`${brand} ${model}`}
+      className="h-12 w-12 object-cover rounded border"
+      onError={() => setImageError(true)}
+    />
+  );
+}
+
 export default function Motorbikes() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedMotorbikeId, setSelectedMotorbikeId] = useState<string | null>(null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -154,6 +175,7 @@ export default function Motorbikes() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[80px]">Ảnh</TableHead>
                 <TableHead>Hãng</TableHead>
                 <TableHead>Model</TableHead>
                 <TableHead>Biển số</TableHead>
@@ -168,6 +190,13 @@ export default function Motorbikes() {
             <TableBody>
               {motorbikes.map((bike) => (
                 <TableRow key={bike.id}>
+                  <TableCell>
+                    <MotorbikeImageThumbnail
+                      imageUrl={bike.image_url}
+                      brand={bike.brand}
+                      model={bike.model}
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">{bike.brand || "Chưa cập nhật"}</TableCell>
                   <TableCell>{bike.model || "Chưa cập nhật"}</TableCell>
                   <TableCell>{bike.license_plate || "-"}</TableCell>
@@ -193,7 +222,10 @@ export default function Motorbikes() {
                         <DropdownMenuItem>
                           <Eye className="mr-2 h-4 w-4" /> Xem chi tiết
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedMotorbikeId(bike.id);
+                          setEditDialogOpen(true);
+                        }}>
                           <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-destructive">
@@ -226,6 +258,12 @@ export default function Motorbikes() {
       <CreateMotorbikeForm
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
+      />
+
+      <EditMotorbikeForm
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        motorbikeId={selectedMotorbikeId}
       />
     </MainLayout>
   );
