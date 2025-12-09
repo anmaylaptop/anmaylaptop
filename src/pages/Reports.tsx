@@ -214,7 +214,9 @@ export default function Reports() {
                           }}
                         />
                         <Bar dataKey="laptops" name="Laptop" fill="hsl(25, 95%, 53%)" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="students" name="Sinh viên" fill="hsl(174, 60%, 40%)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="motorbikes" name="Xe máy" fill="hsl(174, 60%, 40%)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="students" name="Sinh viên" fill="hsl(142, 76%, 36%)" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="donors" name="Nhà hảo tâm" fill="hsl(45, 93%, 47%)" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   )}
@@ -224,7 +226,7 @@ export default function Reports() {
 
             <Card className="animate-fade-in" style={{ animationDelay: "100ms" }}>
               <CardHeader>
-                <CardTitle>Phân bố hỗ trợ</CardTitle>
+                <CardTitle>Phân bố hỗ trợ đã hoàn thành</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[300px]">
