@@ -39,6 +39,7 @@ import { StudentRegistrationForm } from "@/components/forms/StudentRegistrationF
 import { ReCaptchaProvider } from "@/components/captcha/ReCaptchaProvider";
 import { ApplicationDetailDialog } from "@/components/applications/ApplicationDetailDialog";
 import { RejectApplicationDialog } from "@/components/applications/RejectApplicationDialog";
+import { ApproveApplicationDialog } from "@/components/applications/ApproveApplicationDialog";
 import {
   useDonorApplications,
   useStudentApplications,
@@ -100,7 +101,7 @@ function ApplicationTable({ applications, type, isLoading, onViewDetails, onAppr
     );
   }
 
-  function isDonorApplication(app: any): app is DonorApplicationData {
+  function isDonorApplication(app: DonorApplicationData | StudentApplicationData): app is DonorApplicationData {
     return "support_types" in app;
   }
 
@@ -201,6 +202,8 @@ export default function Applications() {
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [applicationToReject, setApplicationToReject] = useState<{ id: string; name: string } | null>(null);
+  const [approveDialogOpen, setApproveDialogOpen] = useState(false);
+  const [applicationToApprove, setApplicationToApprove] = useState<{ id: string; name: string } | null>(null);
 
   const donorPagination = usePagination({ initialPageSize: 10 });
   const studentPagination = usePagination({ initialPageSize: 10 });
@@ -266,13 +269,8 @@ export default function Applications() {
   };
 
   const handleApprove = (id: string, name: string) => {
-    if (confirm(`Bạn có chắc chắn muốn duyệt đơn đăng ký của ${name}?`)) {
-      updateStatusMutation.mutate({
-        id,
-        status: "approved",
-        type: activeTab === "donors" ? "donor" : "student",
-      });
-    }
+    setApplicationToApprove({ id, name });
+    setApproveDialogOpen(true);
   };
 
   const handleReject = (id: string, name: string) => {
@@ -305,16 +303,25 @@ export default function Applications() {
         ? selectedDonorApplication?.full_name
         : selectedStudentApplication?.full_name;
 
-    if (name && confirm(`Bạn có chắc chắn muốn duyệt đơn đăng ký của ${name}?`)) {
+    if (name) {
+      setDetailDialogOpen(false);
+      setApplicationToApprove({ id, name });
+      setApproveDialogOpen(true);
+    }
+  };
+
+  const handleConfirmApprove = () => {
+    if (applicationToApprove) {
       updateStatusMutation.mutate(
         {
-          id,
+          id: applicationToApprove.id,
           status: "approved",
           type: activeTab === "donors" ? "donor" : "student",
         },
         {
           onSuccess: () => {
-            setDetailDialogOpen(false);
+            setApproveDialogOpen(false);
+            setApplicationToApprove(null);
           },
         }
       );
@@ -473,6 +480,16 @@ export default function Applications() {
         onConfirm={handleConfirmReject}
         isLoading={updateStatusMutation.isPending}
         applicantName={applicationToReject?.name || ""}
+      />
+
+      {/* Approve Application Dialog */}
+      <ApproveApplicationDialog
+        open={approveDialogOpen}
+        onOpenChange={setApproveDialogOpen}
+        onConfirm={handleConfirmApprove}
+        isLoading={updateStatusMutation.isPending}
+        applicantName={applicationToApprove?.name || ""}
+        applicantType={activeTab === "donors" ? "donor" : "student"}
       />
     </MainLayout>
   );
