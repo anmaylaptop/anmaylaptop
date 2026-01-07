@@ -1324,3 +1324,62 @@ export function useCreateTuitionSupport() {
     },
   });
 }
+
+export function useTuition(id: string | null) {
+  return useQuery({
+    queryKey: ["tuition", id],
+    queryFn: async () => {
+      if (!id) return null;
+
+      const { data, error } = await supabase
+        .from("tuition_support")
+        .select(`
+          *,
+          donors:donor_id(full_name),
+          students:student_id(full_name)
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching tuition support:", error);
+        throw error;
+      }
+
+      return {
+        ...data,
+        donor_name: data.donors?.full_name || null,
+        student_name: data.students?.full_name || null,
+      } as TuitionSupportData;
+    },
+    enabled: !!id,
+  });
+}
+
+interface DeleteTuitionSupportParams {
+  id: string;
+}
+
+export function useDeleteTuitionSupport() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteTuitionSupportParams) => {
+      const { error } = await supabase.from("tuition_support").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting tuition support:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tuition-support"] });
+      queryClient.invalidateQueries({ queryKey: ["tuition"] });
+      toast.success("Đã xóa hỗ trợ học phí");
+    },
+    onError: (error) => {
+      console.error("Error deleting tuition support:", error);
+      toast.error("Có lỗi xảy ra khi xóa hỗ trợ học phí");
+    },
+  });
+}

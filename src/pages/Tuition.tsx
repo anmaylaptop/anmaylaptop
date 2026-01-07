@@ -43,8 +43,12 @@ import {
   DollarSign 
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTuitionSupport } from "@/hooks/useInventory";
+import { useTuitionSupport, useTuition, useUpdateTuitionSupport, useDeleteTuitionSupport, type TuitionSupportData } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
+import { TuitionDetailDialog } from "@/components/tuition/TuitionDetailDialog";
+import { DeleteTuitionDialog } from "@/components/tuition/DeleteTuitionDialog";
+import { MarkAsTransferredDialog } from "@/components/tuition/MarkAsTransferredDialog";
+import { EditTuitionForm } from "@/components/forms/EditTuitionForm";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { 
@@ -76,6 +80,17 @@ export default function Tuition() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedTuitionId, setSelectedTuitionId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [markTransferredDialogOpen, setMarkTransferredDialogOpen] = useState(false);
+  const [tuitionToDelete, setTuitionToDelete] = useState<{ id: string; amount: number; donor_name: string | null; student_name: string | null } | null>(null);
+  const [tuitionToMarkTransferred, setTuitionToMarkTransferred] = useState<{ id: string; amount: number; donor_name: string | null; student_name: string | null } | null>(null);
+
+  const deleteTuitionMutation = useDeleteTuitionSupport();
+  const updateTuitionMutation = useUpdateTuitionSupport();
+  const { data: selectedTuition } = useTuition(detailDialogOpen ? selectedTuitionId : null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -256,18 +271,46 @@ export default function Tuition() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            setSelectedTuitionId(tuition.id);
+                            setDetailDialogOpen(true);
+                          }}>
                             <Eye className="mr-2 h-4 w-4" /> Xem chi tiết
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            setSelectedTuitionId(tuition.id);
+                            setEditDialogOpen(true);
+                          }}>
                             <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
                           </DropdownMenuItem>
                           {tuition.status === "pledged" && (
-                            <DropdownMenuItem className="text-success">
+                            <DropdownMenuItem
+                              className="text-success"
+                              onClick={() => {
+                                setTuitionToMarkTransferred({
+                                  id: tuition.id,
+                                  amount: tuition.amount,
+                                  donor_name: tuition.donor_name || null,
+                                  student_name: tuition.student_name || null,
+                                });
+                                setMarkTransferredDialogOpen(true);
+                              }}
+                            >
                               <CheckCircle className="mr-2 h-4 w-4" /> Đánh dấu đã thanh toán
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem className="text-destructive">
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setTuitionToDelete({
+                                id: tuition.id,
+                                amount: tuition.amount,
+                                donor_name: tuition.donor_name || null,
+                                student_name: tuition.student_name || null,
+                              });
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
                             <Trash2 className="mr-2 h-4 w-4" /> Xóa
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -298,6 +341,91 @@ export default function Tuition() {
       <CreateTuitionForm
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
+      />
+
+      {/* Tuition Detail Dialog */}
+      <TuitionDetailDialog
+        open={detailDialogOpen}
+        onOpenChange={(open) => {
+          setDetailDialogOpen(open);
+          if (!open) {
+            setSelectedTuitionId(null);
+          }
+        }}
+        tuition={selectedTuition || null}
+        onEdit={(tuition) => {
+          setDetailDialogOpen(false);
+          setSelectedTuitionId(tuition.id);
+          setEditDialogOpen(true);
+        }}
+      />
+
+      {/* Edit Tuition Form */}
+      <EditTuitionForm
+        open={editDialogOpen}
+        onOpenChange={(open) => {
+          setEditDialogOpen(open);
+          if (!open) {
+            setSelectedTuitionId(null);
+          }
+        }}
+        tuitionId={selectedTuitionId}
+      />
+
+      {/* Mark as Transferred Dialog */}
+      <MarkAsTransferredDialog
+        open={markTransferredDialogOpen}
+        onOpenChange={setMarkTransferredDialogOpen}
+        onConfirm={() => {
+          if (tuitionToMarkTransferred) {
+            updateTuitionMutation.mutate(
+              {
+                id: tuitionToMarkTransferred.id,
+                updates: {
+                  status: "paid",
+                  paid_date: new Date().toISOString(),
+                },
+              },
+              {
+                onSuccess: () => {
+                  setMarkTransferredDialogOpen(false);
+                  setTuitionToMarkTransferred(null);
+                },
+              }
+            );
+          }
+        }}
+        isLoading={updateTuitionMutation.isPending}
+        tuitionInfo={{
+          amount: tuitionToMarkTransferred?.amount || 0,
+          donor_name: tuitionToMarkTransferred?.donor_name || null,
+          student_name: tuitionToMarkTransferred?.student_name || null,
+        }}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteTuitionDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => {
+          if (tuitionToDelete) {
+            deleteTuitionMutation.mutate(
+              { id: tuitionToDelete.id },
+              {
+                onSuccess: () => {
+                  setDeleteDialogOpen(false);
+                  setTuitionToDelete(null);
+                },
+              }
+            );
+          }
+        }}
+        isLoading={deleteTuitionMutation.isPending}
+        tuitionInfo={{
+          amount: tuitionToDelete?.amount || 0,
+          donor_name: tuitionToDelete?.donor_name || null,
+          student_name: tuitionToDelete?.student_name || null,
+        }}
       />
     </MainLayout>
   );
