@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Bell, Info, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import {
 
 export function NotificationPopup() {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
     const { data: notifications = [], isLoading } = useNotifications();
     const markAsReadMutation = useMarkNotificationAsRead();
     const markAllAsReadMutation = useMarkAllNotificationsAsRead();
@@ -121,7 +123,15 @@ export function NotificationPopup() {
                     )}
                 </ScrollArea>
                 <div className="border-t p-2">
-                    <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground h-8">
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="w-full text-xs text-muted-foreground h-8"
+                        onClick={() => {
+                            setIsOpen(false);
+                            navigate("/thong-bao");
+                        }}
+                    >
                         Xem tất cả
                     </Button>
                 </div>

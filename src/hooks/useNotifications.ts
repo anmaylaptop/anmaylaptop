@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type NotificationType = "info" | "success" | "warning" | "error";
@@ -120,6 +120,38 @@ export function useMarkAllNotificationsAsRead() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+  });
+}
+
+// Get all notifications with infinite scroll
+export function useInfiniteNotifications(pageSize: number = 20) {
+  return useInfiniteQuery({
+    queryKey: ["notifications", "infinite"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(pageParam, pageParam + pageSize - 1);
+
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        throw error;
+      }
+
+      return (data || []).map((notification) => ({
+        ...notification,
+        time: formatTimeAgo(notification.created_at),
+      })) as (Notification & { time: string })[];
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      // If the last page has fewer items than pageSize, we've reached the end
+      if (lastPage.length < pageSize) {
+        return undefined;
+      }
+      return allPages.length * pageSize;
     },
   });
 }

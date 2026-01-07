@@ -20,6 +20,7 @@ import Tuition from "./pages/Tuition";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import Areas from "./pages/Areas";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 import PublicComponentBank from "./pages/PublicComponentBank";
 import PublicDonorRegistration from "./pages/PublicDonorRegistration";
@@ -154,6 +155,14 @@ const protectedRoutes: RouteRecord[] = [
     element: (
       <ProtectedRoute>
         <Settings />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/thong-bao",
+    element: (
+      <ProtectedRoute>
+        <Notifications />
       </ProtectedRoute>
     ),
   },
