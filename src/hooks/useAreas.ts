@@ -241,6 +241,33 @@ export function useDeleteArea() {
 
   return useMutation({
     mutationFn: async ({ id }: DeleteAreaParams) => {
+      // Check for associated data before deletion
+      const [donorsResult, studentsResult, donorAppsResult, studentAppsResult] = await Promise.all([
+        supabase.from("donors").select("id", { count: "exact", head: true }).eq("area_id", id),
+        supabase.from("students").select("id", { count: "exact", head: true }).eq("area_id", id),
+        supabase.from("donor_applications").select("id", { count: "exact", head: true }).eq("area_id", id),
+        supabase.from("student_applications").select("id", { count: "exact", head: true }).eq("area_id", id),
+      ]);
+
+      const donorsCount = donorsResult.count || 0;
+      const studentsCount = studentsResult.count || 0;
+      const donorAppsCount = donorAppsResult.count || 0;
+      const studentAppsCount = studentAppsResult.count || 0;
+
+      if (donorsCount > 0 || studentsCount > 0 || donorAppsCount > 0 || studentAppsCount > 0) {
+        const associations: string[] = [];
+        if (donorsCount > 0) associations.push(`${donorsCount} nhà hảo tâm`);
+        if (studentsCount > 0) associations.push(`${studentsCount} sinh viên`);
+        if (donorAppsCount > 0) associations.push(`${donorAppsCount} đơn đăng ký nhà hảo tâm`);
+        if (studentAppsCount > 0) associations.push(`${studentAppsCount} đơn đăng ký sinh viên`);
+
+        const errorMessage = `Không thể xóa khu vực này vì đang có dữ liệu liên quan: ${associations.join(", ")}. Vui lòng xóa hoặc chuyển các dữ liệu liên quan trước khi xóa khu vực.`;
+        
+        const error = new Error(errorMessage);
+        (error as any).code = "HAS_ASSOCIATIONS";
+        throw error;
+      }
+
       const { error } = await supabase.from("areas").delete().eq("id", id);
 
       if (error) {
@@ -252,9 +279,13 @@ export function useDeleteArea() {
       queryClient.invalidateQueries({ queryKey: ["areas"] });
       toast.success("Đã xóa khu vực");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Error deleting area:", error);
-      toast.error("Có lỗi xảy ra khi xóa khu vực");
+      if (error.code === "HAS_ASSOCIATIONS") {
+        toast.error(error.message);
+      } else {
+        toast.error("Có lỗi xảy ra khi xóa khu vực");
+      }
     },
   });
 }

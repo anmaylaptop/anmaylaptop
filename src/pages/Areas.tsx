@@ -82,6 +82,8 @@ export default function Areas() {
   const [editingArea, setEditingArea] = useState<AreaData | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [areaToDelete, setAreaToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [toggleActiveDialogOpen, setToggleActiveDialogOpen] = useState(false);
+  const [areaToToggle, setAreaToToggle] = useState<{ id: string; name: string; isActive: boolean } | null>(null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -172,8 +174,23 @@ export default function Areas() {
     }
   };
 
-  const handleToggleActive = (id: string, isActive: boolean) => {
-    toggleActiveMutation.mutate({ id, isActive });
+  const handleToggleActive = (area: AreaData) => {
+    setAreaToToggle({ id: area.id, name: area.name, isActive: !area.is_active });
+    setToggleActiveDialogOpen(true);
+  };
+
+  const handleConfirmToggleActive = () => {
+    if (areaToToggle) {
+      toggleActiveMutation.mutate(
+        { id: areaToToggle.id, isActive: areaToToggle.isActive },
+        {
+          onSuccess: () => {
+            setToggleActiveDialogOpen(false);
+            setAreaToToggle(null);
+          },
+        }
+      );
+    }
   };
 
   const handleDelete = (id: string, name: string) => {
@@ -189,6 +206,10 @@ export default function Areas() {
           onSuccess: () => {
             setDeleteDialogOpen(false);
             setAreaToDelete(null);
+          },
+          onError: () => {
+            // Error toast is handled in the hook
+            // Keep dialog open so user can see the error message
           },
         }
       );
@@ -311,7 +332,7 @@ export default function Areas() {
                           <Edit className="mr-2 h-4 w-4" /> Sửa
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleToggleActive(area.id, !area.is_active)}
+                          onClick={() => handleToggleActive(area)}
                           disabled={toggleActiveMutation.isPending}
                         >
                           <Power className="mr-2 h-4 w-4" />
@@ -413,6 +434,31 @@ export default function Areas() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Toggle Active Confirmation Dialog */}
+      <AlertDialog open={toggleActiveDialogOpen} onOpenChange={setToggleActiveDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {areaToToggle?.isActive ? "Xác nhận kích hoạt" : "Xác nhận vô hiệu hóa"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc chắn muốn {areaToToggle?.isActive ? "kích hoạt" : "vô hiệu hóa"} khu vực{" "}
+              <strong>{areaToToggle?.name}</strong>?
+              {!areaToToggle?.isActive && " Khu vực bị vô hiệu hóa sẽ không hiển thị trong các form đăng ký."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={toggleActiveMutation.isPending}>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmToggleActive}
+              disabled={toggleActiveMutation.isPending}
+            >
+              {toggleActiveMutation.isPending ? "Đang xử lý..." : "Xác nhận"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
