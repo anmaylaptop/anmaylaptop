@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Edit, Loader2 } from "lucide-react";
 import type { DonorData } from "@/hooks/useDonors";
+import { DeactivateDonorDialog } from "./DeactivateDonorDialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { 
@@ -38,11 +40,26 @@ export function DonorDetailDialog({
   onToggleActive,
   isLoading,
 }: DonorDetailDialogProps) {
+  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
+
   if (!donor) return null;
 
-  const handleToggleActive = () => {
+  const handleToggleActive = (checked: boolean) => {
     if (onToggleActive) {
-      onToggleActive(donor.id, !donor.is_active);
+      // Only show confirmation when deactivating (unchecking)
+      if (!checked && donor.is_active) {
+        setDeactivateDialogOpen(true);
+      } else {
+        // Activate directly without confirmation
+        onToggleActive(donor.id, checked);
+      }
+    }
+  };
+
+  const handleConfirmDeactivate = () => {
+    if (onToggleActive) {
+      onToggleActive(donor.id, false);
+      setDeactivateDialogOpen(false);
     }
   };
 
@@ -243,6 +260,15 @@ export function DonorDetailDialog({
           </DialogFooter>
         )}
       </DialogContent>
+
+      {/* Deactivate Confirmation Dialog */}
+      <DeactivateDonorDialog
+        open={deactivateDialogOpen}
+        onOpenChange={setDeactivateDialogOpen}
+        onConfirm={handleConfirmDeactivate}
+        isLoading={isLoading}
+        donorName={donor.full_name}
+      />
     </Dialog>
   );
 }

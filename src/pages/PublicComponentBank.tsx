@@ -1,11 +1,27 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
-import { Search, Wrench, AlertCircle, ExternalLink, MapPin, Phone, Copy, CheckCircle2, HandHeart } from "lucide-react";
+import {
+  Search,
+  Wrench,
+  AlertCircle,
+  ExternalLink,
+  MapPin,
+  Phone,
+  Copy,
+  CheckCircle2,
+  HandHeart,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 import { PublicHeader } from "@/components/layout/PublicHeader";
@@ -58,7 +74,7 @@ export default function PublicComponentBank() {
         description="Danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên có hoàn cảnh khó khăn."
         keywords="linh kiện, Linh kiện cần hỗ trợ, linh kiện laptop, RAM, SSD, CPU, màn hình laptop, ăn mày laptop"
       />
-      
+
       <PublicHeader />
 
       {/* Hero Section */}
@@ -68,7 +84,8 @@ export default function PublicComponentBank() {
             Linh kiện cần hỗ trợ
           </h2>
           <p className="text-lg text-muted-foreground">
-            Danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop cho sinh viên có hoàn cảnh khó khăn
+            Danh sách linh kiện cần được hỗ trợ để sửa chữa và nâng cấp laptop
+            cho sinh viên có hoàn cảnh khó khăn
           </p>
         </div>
       </section>
@@ -99,13 +116,19 @@ export default function PublicComponentBank() {
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
                 <div>
-                  <p className="font-semibold mb-1">Không thể tải dữ liệu linh kiện.</p>
-                  <p className="text-sm">
-                    {error instanceof Error ? error.message : "Vui lòng thử lại sau hoặc liên hệ quản trị viên."}
+                  <p className="font-semibold mb-1">
+                    Không thể tải dữ liệu linh kiện.
                   </p>
-                  {process.env.NODE_ENV === 'development' && (
+                  <p className="text-sm">
+                    {error instanceof Error
+                      ? error.message
+                      : "Vui lòng thử lại sau hoặc liên hệ quản trị viên."}
+                  </p>
+                  {process.env.NODE_ENV === "development" && (
                     <details className="mt-2 text-xs">
-                      <summary className="cursor-pointer">Chi tiết lỗi (dev only)</summary>
+                      <summary className="cursor-pointer">
+                        Chi tiết lỗi (dev only)
+                      </summary>
                       <pre className="mt-2 p-2 bg-destructive/10 rounded overflow-auto">
                         {JSON.stringify(error, null, 2)}
                       </pre>
@@ -136,7 +159,9 @@ export default function PublicComponentBank() {
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Wrench className="h-16 w-16 text-muted-foreground mb-4" />
               <h3 className="text-xl font-semibold mb-2">
-                {searchTerm ? "Không tìm thấy linh kiện nào" : "Chưa có linh kiện nào cần hỗ trợ"}
+                {searchTerm
+                  ? "Không tìm thấy linh kiện nào"
+                  : "Chưa có linh kiện nào cần hỗ trợ"}
               </h3>
               <p className="text-muted-foreground max-w-md">
                 {searchTerm
@@ -147,7 +172,8 @@ export default function PublicComponentBank() {
           ) : (
             <>
               <div className="mb-4 text-sm text-muted-foreground">
-                Tìm thấy {totalCount} linh kiện{totalCount > 1 ? "" : ""} cần hỗ trợ
+                Tìm thấy {totalCount} linh kiện{totalCount > 1 ? "" : ""} cần hỗ
+                trợ
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {components.map((component) => (
@@ -162,11 +188,12 @@ export default function PublicComponentBank() {
                             {component.component_type}
                           </CardTitle>
                           <CardDescription className="text-sm mt-1 truncate">
-                            {component.brand || "Chưa có hãng"} {component.model ? `- ${component.model}` : ""}
+                            {component.brand || "Chưa có hãng"}{" "}
+                            {component.model ? `- ${component.model}` : ""}
                           </CardDescription>
                         </div>
                       </div>
-                      
+
                       {/* Component Code - In đậm và rõ ràng */}
                       <div className="mt-3 p-2 bg-primary/10 rounded-md border border-primary/20">
                         <div className="flex items-center justify-between gap-2">
@@ -183,7 +210,12 @@ export default function PublicComponentBank() {
                               variant="ghost"
                               size="icon"
                               className="h-8 w-8 shrink-0"
-                              onClick={() => handleCopyCode(component.component_code, component.id)}
+                              onClick={() =>
+                                handleCopyCode(
+                                  component.component_code,
+                                  component.id
+                                )
+                              }
                               title="Sao chép mã linh kiện"
                             >
                               {copiedId === component.id ? (
@@ -203,7 +235,9 @@ export default function PublicComponentBank() {
                           <p className="text-xs font-medium text-muted-foreground mb-1">
                             Thông số kỹ thuật:
                           </p>
-                          <p className="text-sm line-clamp-3">{component.specifications}</p>
+                          <p className="text-sm line-clamp-3">
+                            {component.specifications}
+                          </p>
                         </div>
                       )}
 
@@ -242,7 +276,8 @@ export default function PublicComponentBank() {
                       )}
 
                       {/* Delivery Information */}
-                      {(component.delivery_address || component.delivery_phone) && (
+                      {(component.delivery_address ||
+                        component.delivery_phone) && (
                         <div className="pt-2 border-t space-y-2">
                           <p className="text-xs font-medium text-muted-foreground">
                             Thông tin nhận hàng:
@@ -273,10 +308,14 @@ export default function PublicComponentBank() {
                         <div className="text-xs text-muted-foreground">
                           <p>
                             Ngày đăng:{" "}
-                            {format(new Date(component.received_date), "dd/MM/yyyy", { locale: vi })}
+                            {format(
+                              new Date(component.received_date),
+                              "dd/MM/yyyy",
+                              { locale: vi }
+                            )}
                           </p>
                         </div>
-                        
+
                         {/* Support Button */}
                         <Button
                           className="w-full"
@@ -290,7 +329,7 @@ export default function PublicComponentBank() {
                           }}
                         >
                           <HandHeart className="mr-2 h-4 w-4" />
-                          Nhận hỗ trợ
+                          Đăng ký hỗ trợ
                         </Button>
                       </div>
                     </CardContent>
@@ -318,7 +357,9 @@ export default function PublicComponentBank() {
 
       {/* Component Support Form */}
       {selectedComponent && (
-        <ReCaptchaProvider siteKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || ""}>
+        <ReCaptchaProvider
+          siteKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || ""}
+        >
           <ComponentSupportForm
             open={supportFormOpen}
             onOpenChange={(open) => {

@@ -41,6 +41,7 @@ import {
 import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Heart, AlertCircle, Power, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DonorDetailDialog } from "@/components/donors/DonorDetailDialog";
+import { DeactivateDonorDialog } from "@/components/donors/DeactivateDonorDialog";
 import { CreateDonorDialog } from "@/components/dialogs/CreateDonorDialog";
 import { useDonors, useToggleDonorActive, useDeleteDonor } from "@/hooks/useDonors";
 import { usePagination } from "@/hooks/usePagination";
@@ -63,6 +64,8 @@ export default function Donors() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [donorToDelete, setDonorToDelete] = useState<{ id: string; name: string } | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
+  const [donorToDeactivate, setDonorToDeactivate] = useState<{ id: string; name: string } | null>(null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -105,7 +108,31 @@ export default function Donors() {
   };
 
   const handleToggleActive = (id: string, isActive: boolean) => {
-    toggleActiveMutation.mutate({ id, isActive });
+    // Only show confirmation when deactivating
+    if (!isActive) {
+      const donor = donors.find((d) => d.id === id);
+      if (donor) {
+        setDonorToDeactivate({ id, name: donor.full_name });
+        setDeactivateDialogOpen(true);
+      }
+    } else {
+      // Activate directly without confirmation
+      toggleActiveMutation.mutate({ id, isActive });
+    }
+  };
+
+  const handleConfirmDeactivate = () => {
+    if (donorToDeactivate) {
+      toggleActiveMutation.mutate(
+        { id: donorToDeactivate.id, isActive: false },
+        {
+          onSuccess: () => {
+            setDeactivateDialogOpen(false);
+            setDonorToDeactivate(null);
+          },
+        }
+      );
+    }
   };
 
   const handleDelete = (id: string, name: string) => {
@@ -348,6 +375,15 @@ export default function Donors() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Deactivate Confirmation Dialog */}
+      <DeactivateDonorDialog
+        open={deactivateDialogOpen}
+        onOpenChange={setDeactivateDialogOpen}
+        onConfirm={handleConfirmDeactivate}
+        isLoading={toggleActiveMutation.isPending}
+        donorName={donorToDeactivate?.name || ""}
+      />
     </MainLayout>
   );
 }
