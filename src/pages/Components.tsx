@@ -31,8 +31,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Wrench, ExternalLink, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useComponents } from "@/hooks/useInventory";
+import { useComponents, useComponent, useDeleteComponent, type ComponentData } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
+import { ComponentDetailDialog } from "@/components/components/ComponentDetailDialog";
+import { DeleteComponentDialog } from "@/components/components/DeleteComponentDialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 
@@ -62,6 +64,12 @@ export default function Components() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [componentToDelete, setComponentToDelete] = useState<{ id: string; component_code: number | null; component_type: string; model: string | null; brand: string | null } | null>(null);
+
+  const deleteComponentMutation = useDeleteComponent();
+  const { data: selectedComponent } = useComponent(detailDialogOpen ? selectedComponentId : null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -229,6 +237,12 @@ export default function Components() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedComponentId(comp.id);
+                          setDetailDialogOpen(true);
+                        }}>
+                          <Eye className="mr-2 h-4 w-4" /> Xem chi tiết
+                        </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={() => {
                             setSelectedComponentId(comp.id);
@@ -237,7 +251,19 @@ export default function Components() {
                         >
                           <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => {
+                            setComponentToDelete({
+                              id: comp.id,
+                              component_code: comp.component_code,
+                              component_type: comp.component_type,
+                              model: comp.model,
+                              brand: comp.brand,
+                            });
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" /> Xóa
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -278,6 +304,49 @@ export default function Components() {
           }
         }}
         componentId={selectedComponentId}
+      />
+
+      {/* Component Detail Dialog */}
+      <ComponentDetailDialog
+        open={detailDialogOpen}
+        onOpenChange={(open) => {
+          setDetailDialogOpen(open);
+          if (!open) {
+            setSelectedComponentId(null);
+          }
+        }}
+        component={selectedComponent || null}
+        onEdit={(component) => {
+          setDetailDialogOpen(false);
+          setSelectedComponentId(component.id);
+          setEditDialogOpen(true);
+        }}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteComponentDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => {
+          if (componentToDelete) {
+            deleteComponentMutation.mutate(
+              { id: componentToDelete.id },
+              {
+                onSuccess: () => {
+                  setDeleteDialogOpen(false);
+                  setComponentToDelete(null);
+                },
+              }
+            );
+          }
+        }}
+        isLoading={deleteComponentMutation.isPending}
+        componentInfo={{
+          component_code: componentToDelete?.component_code || null,
+          component_type: componentToDelete?.component_type || "",
+          model: componentToDelete?.model || null,
+          brand: componentToDelete?.brand || null,
+        }}
       />
     </MainLayout>
   );

@@ -966,6 +966,34 @@ export function useCreateComponent() {
   });
 }
 
+interface DeleteComponentParams {
+  id: string;
+}
+
+export function useDeleteComponent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteComponentParams) => {
+      const { error } = await supabase.from("components").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting component:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["components"] });
+      queryClient.invalidateQueries({ queryKey: ["component"] });
+      toast.success("Đã xóa linh kiện");
+    },
+    onError: (error) => {
+      console.error("Error deleting component:", error);
+      toast.error("Có lỗi xảy ra khi xóa linh kiện");
+    },
+  });
+}
+
 // Public hook for fetching components that need support (no sensitive info)
 interface PublicComponentData {
   id: string;
