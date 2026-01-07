@@ -300,6 +300,8 @@ export default function Areas() {
               <TableRow>
                 <TableHead>Tên khu vực</TableHead>
                 <TableHead>Mô tả</TableHead>
+                <TableHead>Số nhà hảo tâm</TableHead>
+                <TableHead>Số sinh viên</TableHead>
                 <TableHead>Trạng thái</TableHead>
                 <TableHead>Ngày tạo</TableHead>
                 <TableHead className="w-[50px]"></TableHead>
@@ -310,6 +312,12 @@ export default function Areas() {
                 <TableRow key={area.id}>
                   <TableCell className="font-medium">{area.name}</TableCell>
                   <TableCell>{area.description || "-"}</TableCell>
+                  <TableCell className="text-center">
+                    {area.donors_count ?? 0}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {area.students_count ?? 0}
+                  </TableCell>
                   <TableCell>
                     {area.is_active ? (
                       <StatusBadge status="approved">Hoạt động</StatusBadge>

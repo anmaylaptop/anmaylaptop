@@ -9,6 +9,8 @@ export interface AreaData {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  donors_count?: number;
+  students_count?: number;
 }
 
 interface AreaFilters {
@@ -86,11 +88,33 @@ export function useAreas(filters: AreaFilters = {}) {
         throw error;
       }
 
+      // Fetch counts for each area
+      const areasWithCounts = await Promise.all(
+        (data || []).map(async (area) => {
+          const [donorsResult, studentsResult] = await Promise.all([
+            supabase
+              .from("donors")
+              .select("id", { count: "exact", head: true })
+              .eq("area_id", area.id),
+            supabase
+              .from("students")
+              .select("id", { count: "exact", head: true })
+              .eq("area_id", area.id),
+          ]);
+
+          return {
+            ...area,
+            donors_count: donorsResult.count || 0,
+            students_count: studentsResult.count || 0,
+          } as AreaData;
+        })
+      );
+
       const totalCount = count || 0;
       const totalPages = Math.ceil(totalCount / pageSize);
 
       return {
-        data: data as AreaData[],
+        data: areasWithCounts,
         totalCount,
         totalPages,
       };
