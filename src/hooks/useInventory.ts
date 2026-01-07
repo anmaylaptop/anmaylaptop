@@ -373,6 +373,34 @@ export function useCreateLaptop() {
   });
 }
 
+interface DeleteLaptopParams {
+  id: string;
+}
+
+export function useDeleteLaptop() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteLaptopParams) => {
+      const { error } = await supabase.from("laptops").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting laptop:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["laptops"] });
+      queryClient.invalidateQueries({ queryKey: ["laptop"] });
+      toast.success("Đã xóa laptop");
+    },
+    onError: (error) => {
+      console.error("Error deleting laptop:", error);
+      toast.error("Có lỗi xảy ra khi xóa laptop");
+    },
+  });
+}
+
 // ============================================
 // MOTORBIKE INVENTORY
 // ============================================
@@ -567,6 +595,65 @@ export function useCreateMotorbike() {
     onError: (error) => {
       console.error("Error creating motorbike:", error);
       toast.error("Có lỗi xảy ra khi thêm xe máy");
+    },
+  });
+}
+
+export function useMotorbike(id: string | null) {
+  return useQuery({
+    queryKey: ["motorbike", id],
+    queryFn: async () => {
+      if (!id) return null;
+
+      const { data, error } = await supabase
+        .from("motorbikes")
+        .select(`
+          *,
+          donors:donor_id(full_name),
+          students:student_id(full_name)
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching motorbike:", error);
+        throw error;
+      }
+
+      return {
+        ...data,
+        donor_name: data.donors?.full_name || null,
+        student_name: data.students?.full_name || null,
+      } as MotorbikeData;
+    },
+    enabled: !!id,
+  });
+}
+
+interface DeleteMotorbikeParams {
+  id: string;
+}
+
+export function useDeleteMotorbike() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: DeleteMotorbikeParams) => {
+      const { error } = await supabase.from("motorbikes").delete().eq("id", id);
+
+      if (error) {
+        console.error("Error deleting motorbike:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["motorbikes"] });
+      queryClient.invalidateQueries({ queryKey: ["motorbike"] });
+      toast.success("Đã xóa xe máy");
+    },
+    onError: (error) => {
+      console.error("Error deleting motorbike:", error);
+      toast.error("Có lỗi xảy ra khi xóa xe máy");
     },
   });
 }

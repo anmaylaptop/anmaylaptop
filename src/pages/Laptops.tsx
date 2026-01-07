@@ -59,6 +59,8 @@ import { usePagination } from "@/hooks/usePagination";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { EditLaptopForm } from "@/components/forms/EditLaptopForm";
+import { DeleteLaptopDialog } from "@/components/laptops/DeleteLaptopDialog";
+import { useDeleteLaptop } from "@/hooks/useInventory";
 
 const statusLabels: Record<string, string> = {
   available: "Sẵn sàng",
@@ -80,6 +82,10 @@ export default function Laptops() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedLaptopId, setSelectedLaptopId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [laptopToDelete, setLaptopToDelete] = useState<{ id: string; model: string | null; brand: string | null } | null>(null);
+
+  const deleteLaptopMutation = useDeleteLaptop();
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -248,9 +254,21 @@ export default function Laptops() {
                         >
                           <Upload className="mr-2 h-4 w-4" /> Upload ảnh
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
-                          <Trash2 className="mr-2 h-4 w-4" /> Xóa
-                        </DropdownMenuItem>
+                        {laptop.status === "available" && (
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setLaptopToDelete({
+                                id: laptop.id,
+                                model: laptop.model,
+                                brand: laptop.brand,
+                              });
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" /> Xóa
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -290,6 +308,30 @@ export default function Laptops() {
           }
         }}
         laptopId={selectedLaptopId}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteLaptopDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => {
+          if (laptopToDelete) {
+            deleteLaptopMutation.mutate(
+              { id: laptopToDelete.id },
+              {
+                onSuccess: () => {
+                  setDeleteDialogOpen(false);
+                  setLaptopToDelete(null);
+                },
+              }
+            );
+          }
+        }}
+        isLoading={deleteLaptopMutation.isPending}
+        laptopInfo={{
+          model: laptopToDelete?.model || null,
+          brand: laptopToDelete?.brand || null,
+        }}
       />
     </MainLayout>
   );

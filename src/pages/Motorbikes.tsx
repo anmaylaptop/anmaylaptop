@@ -31,8 +31,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { DataPagination } from "@/components/ui/data-pagination";
 import { Search, Filter, MoreHorizontal, Eye, Edit, Trash2, Plus, Bike, AlertCircle, Image as ImageIcon } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useMotorbikes } from "@/hooks/useInventory";
+import { useMotorbikes, useMotorbike, useDeleteMotorbike, type MotorbikeData } from "@/hooks/useInventory";
 import { usePagination } from "@/hooks/usePagination";
+import { MotorbikeDetailDialog } from "@/components/motorbikes/MotorbikeDetailDialog";
+import { DeleteMotorbikeDialog } from "@/components/motorbikes/DeleteMotorbikeDialog";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 
@@ -74,6 +76,12 @@ export default function Motorbikes() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedMotorbikeId, setSelectedMotorbikeId] = useState<string | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [motorbikeToDelete, setMotorbikeToDelete] = useState<{ id: string; model: string | null; brand: string | null; license_plate: string | null } | null>(null);
+
+  const deleteMotorbikeMutation = useDeleteMotorbike();
+  const { data: selectedMotorbike } = useMotorbike(detailDialogOpen ? selectedMotorbikeId : null);
 
   const pagination = usePagination({ initialPageSize: 10 });
 
@@ -219,7 +227,10 @@ export default function Motorbikes() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          setSelectedMotorbikeId(bike.id);
+                          setDetailDialogOpen(true);
+                        }}>
                           <Eye className="mr-2 h-4 w-4" /> Xem chi tiết
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => {
@@ -228,7 +239,18 @@ export default function Motorbikes() {
                         }}>
                           <Edit className="mr-2 h-4 w-4" /> Chỉnh sửa
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => {
+                            setMotorbikeToDelete({
+                              id: bike.id,
+                              model: bike.model,
+                              brand: bike.brand,
+                              license_plate: bike.license_plate,
+                            });
+                            setDeleteDialogOpen(true);
+                          }}
+                        >
                           <Trash2 className="mr-2 h-4 w-4" /> Xóa
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -262,8 +284,55 @@ export default function Motorbikes() {
 
       <EditMotorbikeForm
         open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
+        onOpenChange={(open) => {
+          setEditDialogOpen(open);
+          if (!open) {
+            setSelectedMotorbikeId(null);
+          }
+        }}
         motorbikeId={selectedMotorbikeId}
+      />
+
+      {/* Motorbike Detail Dialog */}
+      <MotorbikeDetailDialog
+        open={detailDialogOpen}
+        onOpenChange={(open) => {
+          setDetailDialogOpen(open);
+          if (!open) {
+            setSelectedMotorbikeId(null);
+          }
+        }}
+        motorbike={selectedMotorbike || null}
+        onEdit={(motorbike) => {
+          setDetailDialogOpen(false);
+          setSelectedMotorbikeId(motorbike.id);
+          setEditDialogOpen(true);
+        }}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteMotorbikeDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={() => {
+          if (motorbikeToDelete) {
+            deleteMotorbikeMutation.mutate(
+              { id: motorbikeToDelete.id },
+              {
+                onSuccess: () => {
+                  setDeleteDialogOpen(false);
+                  setMotorbikeToDelete(null);
+                },
+              }
+            );
+          }
+        }}
+        isLoading={deleteMotorbikeMutation.isPending}
+        motorbikeInfo={{
+          model: motorbikeToDelete?.model || null,
+          brand: motorbikeToDelete?.brand || null,
+          license_plate: motorbikeToDelete?.license_plate || null,
+        }}
       />
     </MainLayout>
   );
