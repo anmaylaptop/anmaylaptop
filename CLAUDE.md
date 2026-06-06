@@ -1,1 +1,1 @@
-Extends @AGENTS.md
+AGENTS.md
